@@ -1,0 +1,104 @@
+[build-system]
+requires = ['hatchling', 'hatch-vcs', 'hatch-fancy-pypi-readme>=22.5.0']
+build-backend = 'hatchling.build'
+
+[tool.hatch.version]
+path = 'frinx/__init__.py'
+
+[tool.hatch.build.targets.wheel]
+only-include = ["frinx"]
+sources = ["frinx"]
+
+[[tool.hatch.envs.default.matrix]]
+python = ["3.10", "3.11"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/frinx", "/README.md"]
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = 'text/markdown'
+fragments = [{ path = "README.md" }]
+
+[project]
+name = "frinx-python-sdk"
+description = "Python SDK for Frinx Machine Workflow Manager"
+authors = [
+    { name = "Jozef Volak", email = "jozef.volak@elisapolystar.com" },
+    { name = "Maros Marsalek", email = "maros.marsalek@elisapolystar.com" }
+]
+dependencies = [
+    "influxdb_client",
+    "requests",
+    "python_graphql_client",
+    "pydantic"
+]
+readme = "README.md"
+keywords = ["frinx-machine", "workflow-manager", "conductor"]
+requires-python = ">=3.10"
+license = { text = "Apache 2.0" }
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "pytest",
+    "ruff",
+    "coverage"
+]
+
+[project.urls]
+Homepage = 'https://github.com/FRINXio/frinx_python_sdk'
+Source = 'https://github.com/FRINXio/frinx_python_sdk'
+
+[tool.pytest.ini_options]
+pythonpath = "frinx"
+testpaths = 'tests'
+xfail_strict = true
+filterwarnings = [
+    'error',
+    'ignore:path is deprecated.*:DeprecationWarning:',
+]
+
+[tool.codespell]
+skip = '.git,env*'
+#ignore-words-list = ''
+
+[tool.coverage.run]
+source = ['frinx']
+branch = true
+context = '${CONTEXT}'
+
+[tool.coverage.report]
+precision = 2
+exclude_lines = ['pragma: no cover',
+    'raise NotImplementedError',
+    'if TYPE_CHECKING:',
+    'if typing.TYPE_CHECKING:',
+    '@overload',
+    '@typing.overload',
+    '\(Protocol\):$',
+]
+
+[tool.pyright]
+include = ['frinx']
+#exclude = []
+
+[tool.ruff]
+line-length = 120
+extend-select = ['Q', 'RUF100', 'C90', 'UP', 'I', 'E', 'F', 'N', 'PL']
+
+target-version = "py310"
+
+[tool.ruff.isort]
+known-first-party = ['frinx', 'tests']
+force-single-line = true
+
+[tool.ruff.flake8-quotes]
+inline-quotes = 'single'
+multiline-quotes = 'double'
+
+[tool.ruff.mccabe]
+max-complexity = 14
+
+[tool.ruff.pydocstyle]
+convention = "google"

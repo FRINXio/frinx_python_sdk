@@ -1,0 +1,51 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-ast
+        name: check syntax [.py]
+
+      - id: check-builtin-literals
+        name: check literals [.py]
+
+      - id: check-executables-have-shebangs
+        name: check scripts for shebangs
+
+      - id: check-shebang-scripts-are-executable
+        name: check scripts for executable bit
+
+      - id: check-json
+        name: check syntax [.json]
+
+      - id: pretty-format-json
+        name: format [.json]
+        args: [ "--autofix", "--no-sort-keys" ]
+
+      - id: check-toml
+        name: check syntax [.toml]
+
+      - id: check-yaml
+        name: check syntax [.yaml]
+
+      - id: trailing-whitespace
+        name: trim trailing whitespace
+
+      - id: end-of-file-fixer
+        name: fix end of file
+
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.304
+    hooks:
+      - id: pyright
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.263'
+    hooks:
+      - id: ruff
+        name: ruff fix
+        args: [ --fix, --exit-non-zero-on-fix ]
+
+default_language_version:
+  python: python3.10
+
+default_stages: [ "commit" ]
