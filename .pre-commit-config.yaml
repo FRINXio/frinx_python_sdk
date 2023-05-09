@@ -37,6 +37,8 @@ repos:
     rev: v1.1.305
     hooks:
       - id: pyright
+        entry: poetry run pyright
+        args: ['-p', 'pyproject.toml']
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: v0.0.263

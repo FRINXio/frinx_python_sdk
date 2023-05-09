@@ -1,3 +1,4 @@
+import logging
 from abc import ABC
 from abc import abstractmethod
 from typing import Any
@@ -17,6 +18,8 @@ from frinx.common.worker.task_def import TaskDefinition
 from frinx.common.worker.task_def import TaskInput
 from frinx.common.worker.task_def import TaskOutput
 from frinx.common.worker.task_result import TaskResult
+
+logger = logging.getLogger(__name__)
 
 RawTaskIO: TypeAlias = dict[str, Any]
 TaskExecLog: TypeAlias = str
@@ -49,7 +52,7 @@ class WorkerImpl(ABC):
 
     @classmethod
     def task_definition_builder(
-        cls, task_def_template: type[BaseTaskdef] | type[DefaultTaskDefinition] = None # type: ignore
+        cls, task_def_template: type[BaseTaskdef] | type[DefaultTaskDefinition] = None  # type: ignore
     ) -> TaskDefinition:
         cls.validate()
 
@@ -93,7 +96,7 @@ class WorkerImpl(ABC):
         )
 
     @abstractmethod
-    def execute(self, task: Task, task_result: TaskResult) -> TaskResult:
+    def execute(self, task: Task) -> TaskResult:
         pass
 
     @classmethod
@@ -101,14 +104,18 @@ class WorkerImpl(ABC):
         try:
             cls.WorkerInput.parse_obj(task['inputData'])
         except ValidationError as error:
+            logger.error('Validation error occurred: %s', error)
             return TaskResult(status=TaskResultStatus.FAILED, logs=[TaskExecLog(str(error))]).dict()
 
         try:
             # TODO check if ok
-            task_result = cls.execute(cls, Task(**task), TaskResult()).dict()  # type: ignore[arg-type]
+            logger.debug('Executing task %s:', task)
+            task_result = cls.execute(cls, Task(**task)).dict()  # type: ignore[arg-type]
+            logger.debug('Task result %s:', task_result)
             return task_result
 
         except Exception as error:
+            logger.error('Validation error occurred: %s', error)
             return TaskResult(status=TaskResultStatus.FAILED, logs=[TaskExecLog(str(error))]).dict()
 
     @classmethod
@@ -118,6 +125,7 @@ class WorkerImpl(ABC):
                 "Expecting task input model to be a subclass of "
                 f"'{TaskInput.__qualname__}', not '{cls.WorkerInput.__qualname__}'"
             )
+            logger.error(error_msg)
             raise TypeError(error_msg)
 
         if not issubclass(cls.WorkerOutput, TaskOutput):
@@ -125,4 +133,5 @@ class WorkerImpl(ABC):
                 "Expecting task output model to be a subclass of "
                 f"'{TaskOutput.__qualname__}', not '{cls.WorkerOutput.__qualname__}'"
             )
+            logger.error(error_msg)
             raise TypeError(error_msg)

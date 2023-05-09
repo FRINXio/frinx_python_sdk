@@ -9,7 +9,7 @@ from frinx.common.util import snake_to_camel_case
 
 
 class TaskResult(BaseModel):
-    status: TaskResultStatus = Field(default=None)
+    status: TaskResultStatus
     output: dict[str, Any] = Field(default={})
     logs: list[str] | str = Field(default=[])
 
