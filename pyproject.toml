@@ -61,8 +61,6 @@ exclude_lines = ['pragma: no cover',
 [tool.pyright]
 include = ['frinx']
 reportGeneralTypeIssues = "none"
-venvPath = "."
-venv = ".venv"
 
 [tool.ruff]
 line-length = 120
