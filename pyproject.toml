@@ -60,6 +60,7 @@ exclude_lines = ['pragma: no cover',
 
 [tool.pyright]
 include = ['frinx']
+reportGeneralTypeIssues = "none"
 
 [tool.ruff]
 line-length = 120
@@ -80,3 +81,6 @@ max-complexity = 14
 
 [tool.ruff.pydocstyle]
 convention = "google"
+
+[tool.ruff.pylint]
+max-args = 7
