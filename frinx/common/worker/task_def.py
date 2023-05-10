@@ -6,7 +6,7 @@ from pydantic import Field
 
 from frinx.common.conductor_enums import RetryLogic
 from frinx.common.conductor_enums import TimeoutPolicy
-from frinx.common.frinx_rest import x_from
+from frinx.common.frinx_rest import X_FROM
 from frinx.common.util import snake_to_camel_case
 
 
@@ -81,7 +81,7 @@ class DefaultTaskDefinition(BaseTaskdef):
     response_timeout_seconds: int = 59
     rate_limit_per_frequency: int = 0
     rate_limit_frequency_in_seconds: int = 5
-    owner_email: str = x_from
+    owner_email: str = X_FROM
 
 
 class ConductorWorkerError(Exception):

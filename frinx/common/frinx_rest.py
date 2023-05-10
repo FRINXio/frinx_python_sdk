@@ -2,31 +2,30 @@ import os
 from types import MappingProxyType
 
 # RBAC CONFIGURATION
-x_tenant_id = os.getenv('X_TENANT_ID', 'frinx')
-x_from = os.getenv('X_FROM', 'fm-base-workers')
-x_auth_user_group = os.getenv('X_AUTH_USER_GROUP', 'network-admin')
+X_TENANT_ID = os.getenv('X_TENANT_ID', 'frinx')
+X_FROM = os.getenv('X_FROM', 'fm-base-workers')
+X_AUTH_USER_GROUP = os.getenv('X_AUTH_USER_GROUP', 'network-admin')
 
 # SET SERVICES URL VARIABLES
-uniconfig_url_base = os.getenv('UNICONFIG_URL_BASE', 'http://uniconfig:8181/rests')
-elastic_url_base = os.getenv('ELASTICSEACRH_URL_BASE', 'http://elasticsearch:9200')
-conductor_url_base = os.getenv('CONDUCTOR_URL_BASE', 'http://workflow-proxy:8088/proxy/api')
-inventory_url_base = os.getenv('INVENTORY_URL_BASE', 'http://inventory:8000/graphql')
-influxdb_url_base = os.getenv('INFLUXDB_URL_BASE', 'http://influxdb:8086')
-resource_manager_url_base = os.getenv('RESOURCE_MANAGER_URL_BASE', 'http://resource-manager:8884/query')
+UNICONFIG_URL_BASE = os.getenv('UNICONFIG_URL_BASE', 'http://uniconfig:8181/rests')
+CONDUCTOR_URL_BASE = os.getenv('CONDUCTOR_URL_BASE', 'http://workflow-proxy:8088/proxy/api')
+INVENTORY_URL_BASE = os.getenv('INVENTORY_URL_BASE', 'http://inventory:8000/graphql')
+INFLUXDB_URL_BASE = os.getenv('INFLUXDB_URL_BASE', 'http://influxdb:8086')
+RESOURCE_MANAGER_URL_BASE = os.getenv('RESOURCE_MANAGER_URL_BASE', 'http://resource-manager:8884/query')
 
 # URL HEADERS
-uniconfig_headers = MappingProxyType({'Content-Type': 'application/json'})
-conductor_headers = MappingProxyType(
+UNICONFIG_HEADERS = MappingProxyType({'Content-Type': 'application/json'})
+CONDUCTOR_HEADERS = MappingProxyType(
     {
         'Content-Type': 'application/json',
-        'x-tenant-id': x_tenant_id,
-        'from': x_from,
-        'x-auth-user-groups': x_auth_user_group
+        'x-tenant-id': X_TENANT_ID,
+        'from': X_FROM,
+        'x-auth-user-groups': X_AUTH_USER_GROUP
     }
 )
-additional_uniconfig_request_params = MappingProxyType(
+ADDITIONAL_UNICONFIG_REQUEST_PARAMS = MappingProxyType(
     {
         'verify': False,
-        'headers': uniconfig_headers
+        'headers': UNICONFIG_HEADERS
     }
 )

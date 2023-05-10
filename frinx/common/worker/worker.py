@@ -33,8 +33,8 @@ class Config:
 
 @dataclass(config=Config)
 class WorkerImpl(ABC):
-    task_def: TaskDefinition = None # type: ignore
-    task_def_template: type[BaseTaskdef] | type[DefaultTaskDefinition] = None # type: ignore
+    task_def: TaskDefinition
+    task_def_template: type[BaseTaskdef] | type[DefaultTaskDefinition] | None
 
     class WorkerDefinition(TaskDefinition):
         ...
@@ -46,13 +46,14 @@ class WorkerImpl(ABC):
         ...
 
     def __init__(
-        self, task_def_template: type[BaseTaskdef] | type[DefaultTaskDefinition | None] = None  # type: ignore
+            self, task_def_template: type[BaseTaskdef] | type[DefaultTaskDefinition] | None = None   # type: ignore
     ) -> None:
-        self.task_def = self.task_definition_builder(task_def_template)  # type: ignore
+        self.task_def_template = task_def_template
+        self.task_def = self.task_definition_builder(self.task_def_template)  # type: ignore
 
     @classmethod
     def task_definition_builder(
-        cls, task_def_template: type[BaseTaskdef] | type[DefaultTaskDefinition] = None  # type: ignore
+            cls, task_def_template: type[BaseTaskdef] | type[DefaultTaskDefinition] | None = None
     ) -> TaskDefinition:
         cls.validate()
 
@@ -106,7 +107,6 @@ class WorkerImpl(ABC):
         except ValidationError as error:
             logger.error('Validation error occurred: %s', error)
             return TaskResult(status=TaskResultStatus.FAILED, logs=[TaskExecLog(str(error))]).dict()
-
         try:
             # TODO check if ok
             logger.debug('Executing task %s:', task)

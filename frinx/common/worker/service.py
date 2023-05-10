@@ -23,6 +23,7 @@ class ServiceWorkersImpl:
     @classmethod
     def _inner_class_list(cls) -> list[WorkerImpl]:
         results = []
+
         for attr_name in dir(cls):
             obj = getattr(cls, attr_name)
             if isinstance(obj, type) and issubclass(obj, WorkerImpl):

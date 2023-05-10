@@ -4,12 +4,12 @@ import os
 
 import requests
 
-from frinx.common.frinx_rest import conductor_headers
-from frinx.common.frinx_rest import conductor_url_base
+from frinx.common.frinx_rest import CONDUCTOR_HEADERS
+from frinx.common.frinx_rest import CONDUCTOR_URL_BASE
 
 logger = logging.getLogger(__name__)
 
-workflow_import_url = conductor_url_base + '/metadata/workflow'
+workflow_import_url = CONDUCTOR_URL_BASE + '/metadata/workflow'
 
 
 def register_workflow(workflow: str, overwrite: bool = False) -> None:
@@ -23,7 +23,7 @@ def register_workflow(workflow: str, overwrite: bool = False) -> None:
                 response = requests.put(
                     workflow_import_url,
                     data=json.dumps([json.loads(workflow)]),
-                    headers=conductor_headers,
+                    headers=CONDUCTOR_HEADERS,
                     timeout=60,
                 )
                 logger.info('Response status code - %s', response.status_code)
@@ -38,7 +38,7 @@ def register_workflow(workflow: str, overwrite: bool = False) -> None:
                 response = requests.post(
                     workflow_import_url,
                     data=json.dumps(json.loads(workflow)),
-                    headers=conductor_headers,
+                    headers=CONDUCTOR_HEADERS,
                     timeout=60,
                 )
                 logger.info('Response status code - %s', response.status_code)
@@ -68,7 +68,7 @@ def import_workflows(path: str) -> None:
                             response = requests.put(
                                 workflow_import_url,
                                 data=json.dumps(payload),
-                                headers=conductor_headers,
+                                headers=CONDUCTOR_HEADERS,
                                 timeout=60,
                             )
                             logger.info('Response status code - %s', response.status_code)

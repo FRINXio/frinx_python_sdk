@@ -1,8 +1,6 @@
 import json
 from typing import Any
 
-import requests
-
 
 def jsonify_description(
     description: str, labels: list[str] | None = None, rbac: list[str] | None = None
@@ -22,17 +20,6 @@ def jsonify_description(
         desc_representation['rbac'] = rbac
     output = json.dumps(desc_representation)
     return output
-
-
-def parse_response(response: requests.Response) -> tuple[int, str]:
-    decode = response.content.decode('utf8')
-    try:
-        response_json = json.loads(decode if decode else '{}')
-    except ValueError:
-        response_json = json.loads('{}')
-
-    response_code = response.status_code
-    return response_code, response_json
 
 
 def snake_to_camel_case(string: str) -> str:

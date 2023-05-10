@@ -9,30 +9,30 @@ class TaskResultStatus(str, Enum):
 
 
 class WorkflowStatus(str, Enum):
-    COMPLETED = ('COMPLETED',)
-    FAILED = ('FAILED',)
-    PAUSED = ('PAUSED',)
-    RUNNING = ('RUNNING',)
-    TERMINATED = ('TERMINATED',)
-    TIMEOUT_OUT = ('TIMED_OUT',)
+    COMPLETED = 'COMPLETED'
+    FAILED = 'FAILED'
+    PAUSED = 'PAUSED'
+    RUNNING = 'RUNNING'
+    TERMINATED = 'TERMINATED'
+    TIMEOUT_OUT = 'TIMED_OUT'
 
 
 class TimeoutPolicy(str, Enum):
-    TIME_OUT_WORKFLOW = ('TIME_OUT_WF',)
-    ALERT_ONLY = ('ALERT_ONLY',)
+    TIME_OUT_WORKFLOW = 'TIME_OUT_WF'
+    ALERT_ONLY = 'ALERT_ONLY'
 
 
 class SwitchEvaluatorType(str, Enum):
-    JAVASCRIPT = ('javascript',)
+    JAVASCRIPT = 'javascript'
     VALUE_PARAM = 'value-param'
 
 
 class DoWhileEvaluatorType(str, Enum):
-    JAVASCRIPT = ('javascript',)
+    JAVASCRIPT = 'javascript'
     VALUE_PARAM = 'value-param'
 
 
 class RetryLogic(str, Enum):
-    FIXED = ('FIXED',)
-    EXPONENTIAL_BACKOFF = ('EXPONENTIAL_BACKOFF',)
-    LINEAR_BACKOFF = ('LINEAR_BACKOFF',)
+    FIXED = 'FIXED'
+    EXPONENTIAL_BACKOFF = 'EXPONENTIAL_BACKOFF'
+    LINEAR_BACKOFF = 'LINEAR_BACKOFF'
