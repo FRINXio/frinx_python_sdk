@@ -10,6 +10,10 @@ from pydantic.dataclasses import dataclass
 
 from frinx.client.frinx_conductor_wrapper import FrinxConductorWrapper
 from frinx.common.conductor_enums import TaskResultStatus
+from frinx.common.telemetry.common import increment_task_execution_error
+from frinx.common.telemetry.common import increment_task_poll
+from frinx.common.telemetry.common import increment_uncaught_exception
+from frinx.common.telemetry.common import record_task_execute_time
 from frinx.common.telemetry.metrics import Metrics
 from frinx.common.util import jsonify_description
 from frinx.common.util import snake_to_camel_case
@@ -105,8 +109,9 @@ class WorkerImpl(ABC):
 
     @classmethod
     def _execute_wrapper(cls, task: RawTaskIO) -> Any:
+
         task_type = task.get('taskType')
-        metrics.increment_task_poll(task_type)
+        increment_task_poll(metrics, task_type)
 
         try:
             cls.WorkerInput.parse_obj(task['inputData'])
@@ -116,14 +121,13 @@ class WorkerImpl(ABC):
 
         try:
             logger.debug('Executing task %s:', task)
-            task_result: TaskResult
             task_result: TaskResult = cls._execute_func(task)
             logger.debug('Task result %s:', task_result)
             return task_result
 
         except Exception as error:
-            metrics.increment_task_execution_error(task_type, error)
-            metrics.increment_uncaught_exception()
+            increment_task_execution_error(metrics, task_type, error)
+            increment_uncaught_exception(metrics)
             logger.error('Validation error occurred: %s', error)
             return TaskResult(status=TaskResultStatus.FAILED, logs=[TaskExecLog(str(error))]).dict()
 
@@ -135,7 +139,7 @@ class WorkerImpl(ABC):
         start_time = time.time()
         task_result: TaskResult = cls.execute(cls, Task(**task)).dict()  # type: ignore[arg-type]
         finish_time = time.time()
-        metrics.record_task_execute_time(task.get('taskType'), finish_time - start_time)
+        record_task_execute_time(metrics, task.get('taskType'), finish_time - start_time)
         return task_result
 
     @classmethod
