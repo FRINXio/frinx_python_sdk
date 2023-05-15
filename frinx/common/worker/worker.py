@@ -1,4 +1,5 @@
 import logging
+import time
 from abc import ABC
 from abc import abstractmethod
 from typing import Any
@@ -9,6 +10,11 @@ from pydantic.dataclasses import dataclass
 
 from frinx.client.frinx_conductor_wrapper import FrinxConductorWrapper
 from frinx.common.conductor_enums import TaskResultStatus
+from frinx.common.telemetry.common import increment_task_execution_error
+from frinx.common.telemetry.common import increment_task_poll
+from frinx.common.telemetry.common import increment_uncaught_exception
+from frinx.common.telemetry.common import record_task_execute_time
+from frinx.common.telemetry.metrics import Metrics
 from frinx.common.util import jsonify_description
 from frinx.common.util import snake_to_camel_case
 from frinx.common.worker.task import Task
@@ -20,6 +26,7 @@ from frinx.common.worker.task_def import TaskOutput
 from frinx.common.worker.task_result import TaskResult
 
 logger = logging.getLogger(__name__)
+metrics = Metrics()
 
 RawTaskIO: TypeAlias = dict[str, Any]
 TaskExecLog: TypeAlias = str
@@ -102,21 +109,38 @@ class WorkerImpl(ABC):
 
     @classmethod
     def _execute_wrapper(cls, task: RawTaskIO) -> Any:
+
+        task_type = task.get('taskType')
+        increment_task_poll(metrics, task_type)
+
         try:
             cls.WorkerInput.parse_obj(task['inputData'])
         except ValidationError as error:
             logger.error('Validation error occurred: %s', error)
             return TaskResult(status=TaskResultStatus.FAILED, logs=[TaskExecLog(str(error))]).dict()
+
         try:
-            # TODO check if ok
             logger.debug('Executing task %s:', task)
-            task_result = cls.execute(cls, Task(**task)).dict()  # type: ignore[arg-type]
+            task_result: TaskResult = cls._execute_func(task)
             logger.debug('Task result %s:', task_result)
             return task_result
 
         except Exception as error:
+            increment_task_execution_error(metrics, task_type, error)
+            increment_uncaught_exception(metrics)
             logger.error('Validation error occurred: %s', error)
             return TaskResult(status=TaskResultStatus.FAILED, logs=[TaskExecLog(str(error))]).dict()
+
+    @classmethod
+    def _execute_func(cls, task: RawTaskIO) -> TaskResult:
+        if not metrics.settings.metrics_enabled:
+            return cls.execute(cls, Task(**task)).dict()  # type: ignore[arg-type]
+
+        start_time = time.time()
+        task_result: TaskResult = cls.execute(cls, Task(**task)).dict()  # type: ignore[arg-type]
+        finish_time = time.time()
+        record_task_execute_time(metrics, task.get('taskType'), finish_time - start_time)
+        return task_result
 
     @classmethod
     def validate(cls) -> None:
