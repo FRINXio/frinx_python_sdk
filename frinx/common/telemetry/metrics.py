@@ -20,10 +20,10 @@ class MetricsSettings(BaseModel):
 
 class MetricsSingletonMeta(type):
 
-    _instances = {}
+    _instances: dict[Any, Any] = {}
     _lock: Lock = Lock()
 
-    def __call__(cls, *args, **kwargs):
+    def __call__(cls, *args: tuple[Any], **kwargs: dict[str, Any]) -> Any:
         with cls._lock:
             if cls not in cls._instances:
                 instance = super().__call__(*args, **kwargs)
@@ -32,18 +32,18 @@ class MetricsSingletonMeta(type):
 
 
 class Metrics(metaclass=MetricsSingletonMeta):
-    counters: dict = {}
-    gauges: dict = {}
+    counters: dict[str, Counter] = {}
+    gauges: dict[str, Gauge] = {}
     registry: CollectorRegistry
     settings: MetricsSettings
 
-    def __init__(self, settings: MetricsSettings = None):
+    def __init__(self, settings: MetricsSettings | None = None):
 
         if settings is not None:
             self.settings = settings
             self.__init_collector()
 
-    def __init_collector(self):
+    def __init_collector(self) -> None:
         if self.settings.metrics_enabled:
             self.registry = CollectorRegistry()
             start_wsgi_server(self.settings.port, registry=self.registry)
@@ -74,31 +74,27 @@ class Metrics(metaclass=MetricsSingletonMeta):
     def __get_counter(
             self, name: MetricName, documentation: MetricDocumentation, label_names: list[MetricLabel]
     ) -> Counter:
-        if self.settings.metrics_enabled:
-            if name not in self.counters:
-                self.counters[name] = self.__generate_counter(name, documentation, label_names)
-            return self.counters[name]
+        if name not in self.counters:
+            self.counters[name] = self.__generate_counter(name, documentation, label_names)
+        return self.counters[name]
 
     def __get_gauge(
             self, name: MetricName, documentation: MetricDocumentation, label_names: list[MetricLabel]
     ) -> Gauge:
-        if self.settings.metrics_enabled:
-            if name not in self.gauges:
-                self.gauges[name] = self.__generate_gauge(name, documentation, label_names)
-            return self.gauges[name]
+        if name not in self.gauges:
+            self.gauges[name] = self.__generate_gauge(name, documentation, label_names)
+        return self.gauges[name]
 
     def __generate_counter(
             self, name: MetricName, documentation: MetricDocumentation, label_names: list[MetricLabel]
     ) -> Counter:
-        if self.settings.metrics_enabled:
-            return Counter(
-                name=name, documentation=documentation, labelnames=label_names, registry=self.registry
-            )
+        return Counter(
+            name=name, documentation=documentation, labelnames=label_names, registry=self.registry
+        )
 
     def __generate_gauge(
             self, name: MetricName, documentation: MetricDocumentation, label_names: list[MetricLabel]
     ) -> Gauge:
-        if self.settings.metrics_enabled:
-            return Gauge(
-                name=name, documentation=documentation, labelnames=label_names, registry=self.registry
-            )
+        return Gauge(
+            name=name, documentation=documentation, labelnames=label_names, registry=self.registry
+        )

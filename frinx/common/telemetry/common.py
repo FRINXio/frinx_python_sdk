@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from frinx.common.telemetry.metrics import Metrics
 
 
-def increment_task_poll(metrics: Metrics, task_type: str):
+def increment_task_poll(metrics: Metrics, task_type: str) -> None:
     metrics.increment_counter(
         name=MetricName.TASK_POLL,
         documentation=MetricDocumentation.TASK_POLL,
@@ -18,7 +18,7 @@ def increment_task_poll(metrics: Metrics, task_type: str):
     )
 
 
-def increment_task_execution_queue_full(metrics, task_type: str) -> None:
+def increment_task_execution_queue_full(metrics: Metrics, task_type: str) -> None:
     metrics.increment_counter(
         name=MetricName.TASK_EXECUTION_QUEUE_FULL,
         documentation=MetricDocumentation.TASK_EXECUTION_QUEUE_FULL,
@@ -26,7 +26,7 @@ def increment_task_execution_queue_full(metrics, task_type: str) -> None:
     )
 
 
-def increment_uncaught_exception(metrics):
+def increment_uncaught_exception(metrics: Metrics) -> None:
     metrics.increment_counter(
         name=MetricName.THREAD_UNCAUGHT_EXCEPTION,
         documentation=MetricDocumentation.THREAD_UNCAUGHT_EXCEPTION,
@@ -34,7 +34,7 @@ def increment_uncaught_exception(metrics):
     )
 
 
-def increment_task_poll_error(metrics, task_type: str, exception: Exception) -> None:
+def increment_task_poll_error(metrics: Metrics, task_type: str, exception: Exception) -> None:
     metrics.increment_counter(
         name=MetricName.TASK_POLL_ERROR,
         documentation=MetricDocumentation.TASK_POLL_ERROR,
@@ -42,7 +42,7 @@ def increment_task_poll_error(metrics, task_type: str, exception: Exception) -> 
     )
 
 
-def increment_task_paused(metrics, task_type: str) -> None:
+def increment_task_paused(metrics: Metrics, task_type: str) -> None:
     metrics.increment_counter(
         name=MetricName.TASK_PAUSED,
         documentation=MetricDocumentation.TASK_PAUSED,
@@ -52,7 +52,7 @@ def increment_task_paused(metrics, task_type: str) -> None:
     )
 
 
-def increment_task_execution_error(metrics, task_type: str, exception: Exception) -> None:
+def increment_task_execution_error(metrics: Metrics, task_type: str, exception: Exception) -> None:
     metrics.increment_counter(
         name=MetricName.TASK_EXECUTE_ERROR,
         documentation=MetricDocumentation.TASK_EXECUTE_ERROR,
@@ -60,7 +60,7 @@ def increment_task_execution_error(metrics, task_type: str, exception: Exception
     )
 
 
-def increment_task_ack_failed(metrics, task_type: str) -> None:
+def increment_task_ack_failed(metrics: Metrics, task_type: str) -> None:
     metrics.increment_counter(
         name=MetricName.TASK_ACK_FAILED,
         documentation=MetricDocumentation.TASK_ACK_FAILED,
@@ -70,7 +70,7 @@ def increment_task_ack_failed(metrics, task_type: str) -> None:
     )
 
 
-def increment_task_ack_error(metrics, task_type: str, exception: Exception) -> None:
+def increment_task_ack_error(metrics: Metrics, task_type: str, exception: Exception) -> None:
     metrics.increment_counter(
         name=MetricName.TASK_ACK_ERROR,
         documentation=MetricDocumentation.TASK_ACK_ERROR,
@@ -81,7 +81,7 @@ def increment_task_ack_error(metrics, task_type: str, exception: Exception) -> N
     )
 
 
-def increment_task_update_error(metrics, task_type: str, exception: Exception) -> None:
+def increment_task_update_error(metrics: Metrics, task_type: str, exception: Exception) -> None:
     metrics.increment_counter(
         name=MetricName.TASK_UPDATE_ERROR,
         documentation=MetricDocumentation.TASK_UPDATE_ERROR,
@@ -92,7 +92,7 @@ def increment_task_update_error(metrics, task_type: str, exception: Exception) -
     )
 
 
-def increment_external_payload_used(metrics, entity_name: str, operation: str, payload_type: str) -> None:
+def increment_external_payload_used(metrics: Metrics, entity_name: str, operation: str, payload_type: str) -> None:
     metrics.increment_counter(
         name=MetricName.EXTERNAL_PAYLOAD_USED,
         documentation=MetricDocumentation.EXTERNAL_PAYLOAD_USED,
@@ -104,7 +104,7 @@ def increment_external_payload_used(metrics, entity_name: str, operation: str, p
     )
 
 
-def increment_workflow_start_error(metrics, workflow_type: str, exception: Exception) -> None:
+def increment_workflow_start_error(metrics: Metrics, workflow_type: str, exception: Exception) -> None:
     metrics.increment_counter(
         name=MetricName.WORKFLOW_START_ERROR,
         documentation=MetricDocumentation.WORKFLOW_START_ERROR,
@@ -115,7 +115,7 @@ def increment_workflow_start_error(metrics, workflow_type: str, exception: Excep
     )
 
 
-def record_workflow_input_payload_size(metrics, workflow_type: str, version: str, payload_size: int) -> None:
+def record_workflow_input_payload_size(metrics: Metrics, workflow_type: str, version: str, payload_size: int) -> None:
     metrics.record_gauge(
         name=MetricName.WORKFLOW_INPUT_SIZE,
         documentation=MetricDocumentation.WORKFLOW_INPUT_SIZE,
@@ -127,7 +127,7 @@ def record_workflow_input_payload_size(metrics, workflow_type: str, version: str
     )
 
 
-def record_task_result_payload_size(metrics, task_type: str, payload_size: int) -> None:
+def record_task_result_payload_size(metrics: Metrics, task_type: str, payload_size: int) -> None:
     metrics.record_gauge(
         name=MetricName.TASK_RESULT_SIZE,
         documentation=MetricDocumentation.TASK_RESULT_SIZE,
@@ -136,7 +136,7 @@ def record_task_result_payload_size(metrics, task_type: str, payload_size: int) 
     )
 
 
-def record_task_poll_time(metrics, task_type: str, time_spent: float) -> None:
+def record_task_poll_time(metrics: Metrics, task_type: str, time_spent: float) -> None:
     metrics.record_gauge(
         name=MetricName.TASK_POLL_TIME,
         documentation=MetricDocumentation.TASK_POLL_TIME,
@@ -147,7 +147,7 @@ def record_task_poll_time(metrics, task_type: str, time_spent: float) -> None:
     )
 
 
-def record_task_execute_time(metrics, task_type: str, time_spent: float) -> None:
+def record_task_execute_time(metrics: Metrics, task_type: str, time_spent: float) -> None:
     metrics.record_gauge(
         name=MetricName.TASK_EXECUTE_TIME,
         documentation=MetricDocumentation.TASK_EXECUTE_TIME,
