@@ -113,7 +113,7 @@ class WorkflowImpl(BaseModel, ABC):
     def __init__(self, **data: Any):
         super().__init__(**data)
         self.description_builder()
-        self.workflow_builder(self.input_builder())
+        self.tasks = self.compose_workflow(self.input_builder())
 
     def input_builder(self) -> WorkflowInput:
         workflow_inputs = self.WorkflowInput()
@@ -142,7 +142,8 @@ class WorkflowImpl(BaseModel, ABC):
         register_workflow(cls().json(by_alias=True, exclude_none=True), overwrite)
 
     @abstractmethod
-    def workflow_builder(self, workflow_inputs: WorkflowInput) -> None:
+    def compose_workflow(self, workflow_inputs: WorkflowInput) -> list[WorkflowTaskImpl]:
+        # Provide implementation of a workflow
         pass
 
     class Config:
