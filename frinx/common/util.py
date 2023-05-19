@@ -30,3 +30,7 @@ def snake_to_camel_case(string: str) -> str:
     words = string.split('_')
     result = words[0].lower() + ''.join(n.capitalize() for n in words[1:])
     return result
+
+
+def normalize_base_url(url: str) -> str:
+    return url.removesuffix('/')

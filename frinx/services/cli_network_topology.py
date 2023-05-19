@@ -6,6 +6,7 @@ from frinx.common.frinx_rest import CLI_EXECUTE_AND_READ_URL
 from frinx.common.frinx_rest import CLI_EXECUTE_URL
 from frinx.common.frinx_rest import UNICONFIG_HEADERS
 from frinx.common.frinx_rest import UNICONFIG_URL_BASE
+from frinx.common.util import normalize_base_url
 
 
 def execute_and_read(
@@ -32,7 +33,7 @@ def execute_and_read(
     if uniconfig_url_base is not None:
         base_url = uniconfig_url_base
 
-    url = base_url + CLI_EXECUTE_AND_READ_URL.format(node_id)
+    url = normalize_base_url(base_url) + CLI_EXECUTE_AND_READ_URL.format(node_id)
     response = requests.post(
         url,
         data=json.dumps(
@@ -73,7 +74,7 @@ def execute(
     if uniconfig_url_base is not None:
         base_url = uniconfig_url_base
 
-    url = base_url + CLI_EXECUTE_URL.format(node_id)
+    url = normalize_base_url(base_url) + CLI_EXECUTE_URL.format(node_id)
     response = requests.post(
         url,
         data=json.dumps(

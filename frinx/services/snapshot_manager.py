@@ -7,6 +7,7 @@ from frinx.common.frinx_rest import DELETE_SNAPSHOT_URL
 from frinx.common.frinx_rest import REPLACE_CONFIG_WITH_SNAPSHOT_URL
 from frinx.common.frinx_rest import UNICONFIG_HEADERS
 from frinx.common.frinx_rest import UNICONFIG_URL_BASE
+from frinx.common.util import normalize_base_url
 
 
 def create_snapshot(
@@ -28,7 +29,7 @@ def create_snapshot(
     if uniconfig_url_base is not None:
         base_url = uniconfig_url_base
 
-    url = base_url + CREATE_SNAPSHOT_URL
+    url = normalize_base_url(base_url) + CREATE_SNAPSHOT_URL
     response = requests.post(
         url,
         data=json.dumps(
@@ -66,7 +67,7 @@ def delete_snapshot(
     if uniconfig_url_base is not None:
         base_url = uniconfig_url_base
 
-    url = base_url + DELETE_SNAPSHOT_URL
+    url = normalize_base_url(base_url) + DELETE_SNAPSHOT_URL
     response = requests.post(
         url,
         data=json.dumps(
@@ -103,7 +104,7 @@ def replace_config_with_snapshot(
     if uniconfig_url_base is not None:
         base_url = uniconfig_url_base
 
-    url = base_url + REPLACE_CONFIG_WITH_SNAPSHOT_URL
+    url = normalize_base_url(base_url) + REPLACE_CONFIG_WITH_SNAPSHOT_URL
     response = requests.post(
         url,
         data=json.dumps(

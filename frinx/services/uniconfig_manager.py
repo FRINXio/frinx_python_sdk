@@ -9,6 +9,7 @@ from frinx.common.frinx_rest import REPLACE_CONFIG_WITH_OPERATIONAL_URL
 from frinx.common.frinx_rest import SYNC_FROM_NETWORK_URL
 from frinx.common.frinx_rest import UNICONFIG_HEADERS
 from frinx.common.frinx_rest import UNICONFIG_URL_BASE
+from frinx.common.util import normalize_base_url
 
 
 def create_transaction(
@@ -60,7 +61,7 @@ def close_transaction(transaction_id: str, uniconfig_url_base: str | None = None
     if uniconfig_url_base is not None:
         base_url = uniconfig_url_base
 
-    url = base_url + CLOSE_TRANSACTION_URL
+    url = normalize_base_url(base_url) + CLOSE_TRANSACTION_URL
     response = requests.post(url=url, cookies={'UNICONFIGTXID': transaction_id}, headers=UNICONFIG_HEADERS)
     response.raise_for_status()
     return response
@@ -88,7 +89,7 @@ def commit_transaction(
     if uniconfig_url_base is not None:
         base_url = uniconfig_url_base
 
-    url = base_url + COMMIT_TRANSACTION_URL
+    url = normalize_base_url(base_url) + COMMIT_TRANSACTION_URL
 
     # Input with target nodes will be deprecated in the future, Uniconfig is able to track modified nodes by itself
     response = requests.post(
@@ -127,7 +128,7 @@ def replace_config_with_operational(
     if uniconfig_url_base is not None:
         base_url = uniconfig_url_base
 
-    url = base_url + REPLACE_CONFIG_WITH_OPERATIONAL_URL
+    url = normalize_base_url(base_url) + REPLACE_CONFIG_WITH_OPERATIONAL_URL
     response = requests.post(
         url,
         data=json.dumps(
@@ -168,7 +169,7 @@ def sync_from_network(
     if uniconfig_url_base is not None:
         base_url = uniconfig_url_base
 
-    url = base_url + SYNC_FROM_NETWORK_URL
+    url = normalize_base_url(base_url) + SYNC_FROM_NETWORK_URL
     response = requests.post(
         url,
         data=json.dumps(

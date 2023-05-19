@@ -8,6 +8,7 @@ from frinx.common.frinx_rest import INSTALL_NODE_URL
 from frinx.common.frinx_rest import UNICONFIG_HEADERS
 from frinx.common.frinx_rest import UNICONFIG_URL_BASE
 from frinx.common.frinx_rest import UNINSTALL_NODE_URL
+from frinx.common.util import normalize_base_url
 
 
 def install_node(
@@ -32,7 +33,7 @@ def install_node(
     if uniconfig_url_base is not None:
         base_url = uniconfig_url_base
 
-    url = base_url + INSTALL_NODE_URL
+    url = normalize_base_url(base_url) + INSTALL_NODE_URL
     data = {
         'input': {
             'node-id': node_id,
@@ -67,7 +68,7 @@ def uninstall_node(
     if uniconfig_url_base is not None:
         base_url = uniconfig_url_base
 
-    url = base_url + UNINSTALL_NODE_URL
+    url = normalize_base_url(base_url) + UNINSTALL_NODE_URL
     data = {
         'input': {
             'node-id': node_id,
