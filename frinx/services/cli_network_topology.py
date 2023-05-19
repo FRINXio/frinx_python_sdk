@@ -39,7 +39,7 @@ def execute_and_read(
             {
                 'input': {
                     'command': command,
-                    'wait_for_output': wait_for_output
+                    'wait-for-output-timer': wait_for_output
                 }
             }
         ),
