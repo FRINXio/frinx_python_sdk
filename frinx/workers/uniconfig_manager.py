@@ -28,10 +28,17 @@ class UniconfigManager(ServiceWorkersImpl):
 
         class WorkerOutput(TaskOutput):
             transaction_id: str
+            uniconfig_server_id: str | None
 
         def execute(self, task: Task) -> TaskResult:
             response = create_transaction(**task.input_data)
-            return TaskResult(status=TaskResultStatus.COMPLETED, output={'transaction_id': response.text})
+            cookies = response.cookies.get_dict()
+            transaction_id: str = cookies['UNICONFIGTXID']
+            uniconfig_server_id: str = cookies.get('uniconfig_server_id')
+            return TaskResult(
+                status=TaskResultStatus.COMPLETED,
+                output={'transaction_id': transaction_id, 'uniconfig_server_id': uniconfig_server_id}
+            )
 
     class CloseTransaction(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
