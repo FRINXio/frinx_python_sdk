@@ -16,6 +16,7 @@ pre-commit = "*"
 ruff = "*"
 coverage = "*"
 mypy = "^1.3.0"
+types-requests = "^2.31.0.0"
 
 [tool.poetry]
 packages = [{ include = "frinx" }]
@@ -91,7 +92,7 @@ max-args = 7
 python_version = "3.10"
 
 explicit_package_bases = true
-namespace_paskages = true
+namespace_packages = true
 strict = true
 pretty = true
 ignore_missing_imports = true

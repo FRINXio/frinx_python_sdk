@@ -7,12 +7,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  format-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: jpetrucciani/ruff-check@0.0.263
-
   codespell:
     name: Codespell
     runs-on: ubuntu-latest
@@ -26,7 +20,7 @@ jobs:
           check_filenames: true
           check_hidden: false
 
-  unittests:
+  tests:
     strategy:
       fail-fast: false
       matrix:
@@ -42,8 +36,15 @@ jobs:
         uses: abatilo/actions-poetry@v2
         with:
           poetry-version: ${{ matrix.poetry-version }}
-      - name: poetry version bump
-        run: poetry version $(git describe --tags --abbrev=0)
-      - name: Test with pytest
+      - name: Install package dependencies
         run: |
           poetry install
+      - name: Run mypy
+        run: |
+          poetry run mypy .
+      - name: Run ruff
+        run: |
+          poetry run ruff .
+      - name: Run pyright
+        run: |
+          poetry run pyright .
