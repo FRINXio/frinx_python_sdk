@@ -40,6 +40,13 @@ repos:
         entry: poetry run pyright
         args: ['-p', 'pyproject.toml']
 
+#  -   repo: https://github.com/pre-commit/mirrors-mypy
+#      rev: v1.3.0
+#      hooks:
+#      -   id: mypy
+#          entry: poetry run mypy
+#          args: [.]
+
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: v0.0.263
     hooks:

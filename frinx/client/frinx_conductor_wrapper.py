@@ -8,9 +8,11 @@ import time
 import traceback
 import uuid
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass
 from threading import Thread
 from typing import Any
+from typing import TypeAlias
 
 import requests
 
@@ -31,6 +33,8 @@ DEFAULT_TASK_DEFINITION = {
 
 hostname = socket.gethostname()
 
+RawTaskIO: TypeAlias = dict[str, Any]
+
 
 @dataclass
 class RegisteredWorkerTask:
@@ -38,22 +42,29 @@ class RegisteredWorkerTask:
     exec_function: Any
 
 
+@dataclass
+class NextWorkerTask:
+    task_type: str
+    exec_function: str | None
+    poll_uuid: uuid.UUID | None
+
+
 class TaskSource:
-    def __init__(self):
+    def __init__(self) -> None:
         self.lock = threading.Lock()
-        self.task_types = {}
-        self.task_types_list = []
+        self.task_types: RawTaskIO = {}
+        self.task_types_list: list[str] = []
 
-        self.actual_uuid = None
-        self.filtered_queue = {}
-        self.actual_task_types_running = defaultdict(int)
-        self.last_task_position = 0
+        self.actual_uuid: uuid.UUID | None = None
+        self.filtered_queue: dict[str, Any] = {}
+        self.actual_task_types_running: dict[str, Any] = defaultdict(int)
+        self.last_task_position: int = 0
 
-    def register_task_type(self, task_type, exec_function):
+    def register_task_type(self, task_type: str, exec_function: Any) -> None:
         self.task_types[task_type] = RegisteredWorkerTask(task_type, exec_function)
         self.task_types_list = list(self.task_types)
 
-    def handle_tasks(self, queue):
+    def handle_tasks(self, queue: dict[str, int]) -> None:
         with self.lock:
             self.actual_uuid = uuid.uuid4()
             self.filtered_queue = {
@@ -62,15 +73,15 @@ class TaskSource:
                 if key in self.task_types.keys() and value > 0
             }
 
-    def round_robin_task_types(self):
+    def round_robin_task_types(self) -> str:
         task_type = self.task_types_list[self.last_task_position]
         self.last_task_position += 1
-
         if self.last_task_position == len(self.task_types):
             self.last_task_position = 0
         return task_type
 
-    def get_next_task(self, last_task_type):
+    def get_next_task(self, last_task_type: str | None) -> NextWorkerTask | None:
+
         with self.lock:
             if last_task_type:
                 self.actual_task_types_running[last_task_type] -= 1
@@ -78,7 +89,7 @@ class TaskSource:
             if len(self.filtered_queue) == 0:
                 return None
 
-            task_type = None
+            task_type = ''
             while task_type not in self.filtered_queue:
                 task_type = self.round_robin_task_types()
 
@@ -97,26 +108,22 @@ class TaskSource:
             )
             return next_worker
 
-    def task_not_found_anymore(self, task_not_found):
+    def task_not_found_anymore(self, task_not_found: NextWorkerTask) -> None:
+
         if self.actual_uuid == task_not_found.poll_uuid:
             with self.lock:
-                self.filtered_queue.pop(task_not_found.task_type, None)
-
-
-@dataclass
-class NextWorkerTask:
-    task_type: str | None = None
-    exec_function: str | None = None
-    poll_uuid: str | uuid.UUID | None = None
+                if task_not_found.task_type is not None:
+                    self.filtered_queue.pop(task_not_found.task_type, None)
 
 
 class FrinxConductorWrapper:
     def __init__(
-        self, server_url, max_thread_count, polling_interval=0.1, worker_id=None, headers=None
-    ):
+        self, server_url: str, max_thread_count: int, polling_interval: float = 0.1,
+            worker_id: str | None = None, headers: dict[str, Any] | None = None
+    ) -> None:
         # Synchronizes access to self.queues by producer thread (in read_queue) and consumer threads (in tasks_in_queue)
         self.lock = threading.Lock()
-        self.queues = {}
+        self.queues: dict[Any, Any] = {}
         self.conductor_task_url = server_url + '/metadata/taskdefs'
         self.headers = headers
         self.consumer_worker_count = max_thread_count
@@ -128,7 +135,7 @@ class FrinxConductorWrapper:
         self.task_client = wfc_mgr.task_client
         self.worker_id = worker_id or hostname
 
-    def start_workers(self):
+    def start_workers(self) -> None:
         for i in range(self.consumer_worker_count):
             thread = Thread(target=self.consume_task)
             thread.daemon = True
@@ -154,12 +161,10 @@ class FrinxConductorWrapper:
 
     # Consume_task is executing tasks in the queue. The tasks are selected by round-robin from all task types.
     # If there is no task for processing, the thread is in sleeping for a defined interval.
-    def consume_task(self):
+    def consume_task(self) -> None:
         last_task_type = None
-        next_task = None
         while True:
-            if self.task_source.get_next_task(last_task_type) is not None:
-                next_task = self.task_source.get_next_task(last_task_type)
+            next_task = self.task_source.get_next_task(last_task_type)
 
             last_task_type = None
 
@@ -187,7 +192,7 @@ class FrinxConductorWrapper:
 
             self.execute(polled_task, next_task.exec_function)
 
-    def replace_external_payload_input(self, task):
+    def replace_external_payload_input(self, task: RawTaskIO) -> RawTaskIO | None:
         # No external payload placeholder present, just return original task
         if self.task_client.EXTERNAL_INPUT_KEY not in task:
             return task
@@ -221,7 +226,7 @@ class FrinxConductorWrapper:
             self.handle_task_exception(task)
             return None
 
-    def register(self, task_type, task_definition, exec_function):
+    def register(self, task_type: str, task_definition: RawTaskIO, exec_function: Any) -> None:
         if task_definition is None:
             task_definition = copy.deepcopy(DEFAULT_TASK_DEFINITION)
         else:
@@ -241,7 +246,7 @@ class FrinxConductorWrapper:
 
         self.task_source.register_task_type(task_type, exec_function)
 
-    def execute(self, task, exec_function):
+    def execute(self, task: RawTaskIO, exec_function: Callable[[Any], Any]) -> None:
         try:
             logger.info('Executing a task %s', task['taskId'])
             resp = exec_function(task)
@@ -257,7 +262,7 @@ class FrinxConductorWrapper:
         except Exception:
             self.handle_task_exception(task)
 
-    def handle_task_exception(self, task):
+    def handle_task_exception(self, task: RawTaskIO) -> None:
         logger.error('Unable to execute a task %s', task['taskId'], exc_info=True)
         error_info = traceback.format_exc().split('\n')[:-1]
         task['status'] = 'FAILED'

@@ -110,7 +110,7 @@ class WorkerImpl(ABC):
     @classmethod
     def _execute_wrapper(cls, task: RawTaskIO) -> Any:
 
-        task_type = task.get('taskType')
+        task_type = str(task.get('taskType'))
         increment_task_poll(metrics, task_type)
 
         try:
@@ -121,10 +121,9 @@ class WorkerImpl(ABC):
 
         try:
             logger.debug('Executing task %s:', task)
-            task_result: TaskResult = cls._execute_func(task)
+            task_result: RawTaskIO = cls._execute_func(task)
             logger.debug('Task result %s:', task_result)
             return task_result
-
         except Exception as error:
             increment_task_execution_error(metrics, task_type, error)
             increment_uncaught_exception(metrics)
@@ -132,14 +131,14 @@ class WorkerImpl(ABC):
             return TaskResult(status=TaskResultStatus.FAILED, logs=[TaskExecLog(str(error))]).dict()
 
     @classmethod
-    def _execute_func(cls, task: RawTaskIO) -> TaskResult:
+    def _execute_func(cls, task: RawTaskIO) -> RawTaskIO:
         if not metrics.settings.metrics_enabled:
             return cls.execute(cls, Task(**task)).dict()  # type: ignore[arg-type]
 
         start_time = time.time()
-        task_result: TaskResult = cls.execute(cls, Task(**task)).dict()  # type: ignore[arg-type]
+        task_result: RawTaskIO = cls.execute(cls, Task(**task)).dict()  # type: ignore[arg-type]
         finish_time = time.time()
-        record_task_execute_time(metrics, task.get('taskType'), finish_time - start_time)
+        record_task_execute_time(metrics, str(task.get('taskType')), finish_time - start_time)
         return task_result
 
     @classmethod
