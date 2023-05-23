@@ -29,3 +29,18 @@ ADDITIONAL_UNICONFIG_REQUEST_PARAMS = MappingProxyType(
         'headers': UNICONFIG_HEADERS
     }
 )
+
+CREATE_TRANSACTION_URL = '/operations/uniconfig-manager:create-transaction'
+COMMIT_TRANSACTION_URL = '/operations/uniconfig-manager:commit'
+CLOSE_TRANSACTION_URL = '/operations/uniconfig-manager:close-transaction'
+CREATE_SNAPSHOT_URL = '/operations/snapshot-manager:create-snapshot'
+DELETE_SNAPSHOT_URL = '/operations/snapshot-manager:delete-snapshot'
+REPLACE_CONFIG_WITH_SNAPSHOT_URL = '/operations/snapshot-manager:replace-config-with-snapshot'
+REPLACE_CONFIG_WITH_OPERATIONAL_URL = '/operations/uniconfig-manager:replace-config-with-operational'
+SYNC_FROM_NETWORK_URL = '/operations/uniconfig-manager:sync-from-network'
+INSTALL_NODE_URL = '/operations/connection-manager:install-node'
+UNINSTALL_NODE_URL = '/operations/connection-manager:uninstall-node'
+CLI_EXECUTE_AND_READ_URL = '/operations/network-topology:network-topology/' \
+                           'topology=cli/node={}/yang-ext:mount/cli-unit-generic:execute-and-read'
+CLI_EXECUTE_URL = '/operations/network-topology:network-topology/' \
+                  'topology=cli/node={}/yang-ext:mount/cli-unit-generic:execute'
