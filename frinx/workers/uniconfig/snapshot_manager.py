@@ -8,9 +8,9 @@ from frinx.common.worker.task_def import TaskInput
 from frinx.common.worker.task_def import TaskOutput
 from frinx.common.worker.task_result import TaskResult
 from frinx.common.worker.worker import WorkerImpl
-from frinx.services.snapshot_manager import create_snapshot
-from frinx.services.snapshot_manager import delete_snapshot
-from frinx.services.snapshot_manager import replace_config_with_snapshot
+from frinx.services.uniconfig.snapshot_manager import create_snapshot
+from frinx.services.uniconfig.snapshot_manager import delete_snapshot
+from frinx.services.uniconfig.snapshot_manager import replace_config_with_snapshot
 
 
 class SnapshotManager(ServiceWorkersImpl):

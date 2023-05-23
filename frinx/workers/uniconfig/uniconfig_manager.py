@@ -8,11 +8,11 @@ from frinx.common.worker.task_def import TaskInput
 from frinx.common.worker.task_def import TaskOutput
 from frinx.common.worker.task_result import TaskResult
 from frinx.common.worker.worker import WorkerImpl
-from frinx.services.uniconfig_manager import close_transaction
-from frinx.services.uniconfig_manager import commit_transaction
-from frinx.services.uniconfig_manager import create_transaction
-from frinx.services.uniconfig_manager import replace_config_with_operational
-from frinx.services.uniconfig_manager import sync_from_network
+from frinx.services.uniconfig.uniconfig_manager import close_transaction
+from frinx.services.uniconfig.uniconfig_manager import commit_transaction
+from frinx.services.uniconfig.uniconfig_manager import create_transaction
+from frinx.services.uniconfig.uniconfig_manager import replace_config_with_operational
+from frinx.services.uniconfig.uniconfig_manager import sync_from_network
 
 
 class UniconfigManager(ServiceWorkersImpl):
