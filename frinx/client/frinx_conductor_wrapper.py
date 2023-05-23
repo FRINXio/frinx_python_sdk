@@ -8,6 +8,7 @@ import time
 import traceback
 import uuid
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass
 from threading import Thread
 from typing import Any
@@ -33,6 +34,7 @@ DEFAULT_TASK_DEFINITION = {
 hostname = socket.gethostname()
 
 RawTaskIO: TypeAlias = dict[str, Any]
+
 
 @dataclass
 class RegisteredWorkerTask:
@@ -244,7 +246,7 @@ class FrinxConductorWrapper:
 
         self.task_source.register_task_type(task_type, exec_function)
 
-    def execute(self, task: RawTaskIO, exec_function: Any) -> None:
+    def execute(self, task: RawTaskIO, exec_function: Callable[[Any], Any]) -> None:
         try:
             logger.info('Executing a task %s', task['taskId'])
             resp = exec_function(task)
