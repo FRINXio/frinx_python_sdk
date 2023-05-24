@@ -2,7 +2,6 @@ from typing import Any
 
 from frinx.common.conductor_enums import TaskResultStatus
 from frinx.common.worker.service import ServiceWorkersImpl
-from frinx.common.worker.task import Task
 from frinx.common.worker.task_def import TaskDefinition
 from frinx.common.worker.task_def import TaskInput
 from frinx.common.worker.task_def import TaskOutput
@@ -22,14 +21,22 @@ class CliNetworkTopology(ServiceWorkersImpl):
             node_id: str
             command: str
             transaction_id: str
+            uniconfig_server_id: str | None = None
             wait_for_output: int = 0
             uniconfig_url_base: str | None = None
 
         class WorkerOutput(TaskOutput):
             output: dict[str, Any]
 
-        def execute(self, task: Task) -> TaskResult:
-            response = execute_and_read(**task.input_data)
+        def execute(self, worker_input: WorkerInput) -> TaskResult:
+            response = execute_and_read(
+                node_id=worker_input.node_id,
+                command=worker_input.command,
+                transaction_id=worker_input.transaction_id,
+                uniconfig_server_id=worker_input.uniconfig_server_id,
+                wait_for_output=worker_input.wait_for_output,
+                uniconfig_url_base=worker_input.uniconfig_url_base
+            )
             return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
 
     class Execute(WorkerImpl):
@@ -42,11 +49,18 @@ class CliNetworkTopology(ServiceWorkersImpl):
             node_id: str
             command: str
             transaction_id: str
-            uniconfig_url_base: str | None
+            uniconfig_server_id: str | None = None
+            uniconfig_url_base: str | None = None
 
         class WorkerOutput(TaskOutput):
             output: dict[str, Any]
 
-        def execute(self, task: Task) -> TaskResult:
-            response = execute(**task.input_data)
+        def execute(self, worker_input: WorkerInput) -> TaskResult:
+            response = execute(
+                node_id=worker_input.node_id,
+                command=worker_input.command,
+                transaction_id=worker_input.transaction_id,
+                uniconfig_server_id=worker_input.uniconfig_server_id,
+                uniconfig_url_base=worker_input.uniconfig_url_base
+            )
             return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())

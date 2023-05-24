@@ -1,5 +1,6 @@
 import logging
 import time
+import typing
 from abc import ABC
 from abc import abstractmethod
 from typing import Any
@@ -17,7 +18,6 @@ from frinx.common.telemetry.common import record_task_execute_time
 from frinx.common.telemetry.metrics import Metrics
 from frinx.common.util import jsonify_description
 from frinx.common.util import snake_to_camel_case
-from frinx.common.worker.task import Task
 from frinx.common.worker.task_def import BaseTaskdef
 from frinx.common.worker.task_def import DefaultTaskDefinition
 from frinx.common.worker.task_def import TaskDefinition
@@ -104,7 +104,10 @@ class WorkerImpl(ABC):
         )
 
     @abstractmethod
-    def execute(self, task: Task) -> TaskResult:
+    def execute(self, worker_input: typing.Any) -> TaskResult:
+        # worker_input parameter has to be of type any, otherwise all other subclasses of WorkerImpl would
+        # violate Liskov substitution principle.
+        # https://mypy.readthedocs.io/en/stable/common_issues.html#incompatible-overrides
         pass
 
     @classmethod
@@ -112,13 +115,6 @@ class WorkerImpl(ABC):
 
         task_type = str(task.get('taskType'))
         increment_task_poll(metrics, task_type)
-
-        try:
-            cls.WorkerInput.parse_obj(task['inputData'])
-        except ValidationError as error:
-            logger.error('Validation error occurred: %s', error)
-            return TaskResult(status=TaskResultStatus.FAILED, logs=[TaskExecLog(str(error))]).dict()
-
         try:
             logger.debug('Executing task %s:', task)
             task_result: RawTaskIO = cls._execute_func(task)
@@ -132,11 +128,18 @@ class WorkerImpl(ABC):
 
     @classmethod
     def _execute_func(cls, task: RawTaskIO) -> RawTaskIO:
+        try:
+            cls.WorkerInput.parse_obj(task['inputData'])
+        except ValidationError as error:
+            logger.error('Validation error occurred: %s', error)
+            raise error
+
+        worker_input = cls.WorkerInput.parse_obj(task['inputData'])
         if not metrics.settings.metrics_enabled:
-            return cls.execute(cls, Task(**task)).dict()  # type: ignore[arg-type]
+            return cls.execute(cls, worker_input).dict()  # type: ignore[arg-type]
 
         start_time = time.time()
-        task_result: RawTaskIO = cls.execute(cls, Task(**task)).dict()  # type: ignore[arg-type]
+        task_result: RawTaskIO = cls.execute(cls, worker_input).dict()  # type: ignore[arg-type]
         finish_time = time.time()
         record_task_execute_time(metrics, str(task.get('taskType')), finish_time - start_time)
         return task_result
