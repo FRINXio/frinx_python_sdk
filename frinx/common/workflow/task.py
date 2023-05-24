@@ -433,7 +433,7 @@ class SubWorkflowTask(WorkflowTaskImpl):
         worker_inputs = values['input_parameters'].dict()
         match sub_wf_def:
             case SubWorkflowFromDefParam():
-                workflow_inputs = sub_wf_def.name.WorkflowInput().__fields__.items()  # type: ignore
+                workflow_inputs = sub_wf_def.name.WorkflowInput().__fields__.items()
                 for key, value in workflow_inputs:
                     if key not in worker_inputs:
                         if value.required is False:
@@ -442,7 +442,7 @@ class SubWorkflowTask(WorkflowTaskImpl):
                             raise ValueError(f'Missing input {key}')
                 values['sub_workflow_param'] = SubWorkflowParam(
                     name=sub_wf_def.name.__name__,
-                    version=sub_wf_def.name.__fields__['version'].default,  # type: ignore
+                    version=sub_wf_def.name.__fields__['version'].default,
                 )
         return values
 
@@ -478,8 +478,8 @@ class SimpleTask(WorkflowTaskImpl):
             case type():
                 if not issubclass(task_def, WorkerImpl):
                     raise ValueError('Bad input for name')
-                values['name'] = task_def.WorkerDefinition.__fields__['name'].default  # type: ignore[attr-defined]
-                task_input = task_def.WorkerInput.__fields__.items()  # type: ignore[attr-defined]
+                values['name'] = task_def.WorkerDefinition.__fields__['name'].default
+                task_input = task_def.WorkerInput.__fields__.items()
                 for key, value in task_input:
                     if key not in worker_inputs:
                         if value.required is False:

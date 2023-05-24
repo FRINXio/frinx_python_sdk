@@ -53,10 +53,10 @@ class WorkerImpl(ABC):
         ...
 
     def __init__(
-            self, task_def_template: type[BaseTaskdef] | type[DefaultTaskDefinition] | None = None   # type: ignore
+            self, task_def_template: type[BaseTaskdef] | type[DefaultTaskDefinition] | None = None
     ) -> None:
         self.task_def_template = task_def_template
-        self.task_def = self.task_definition_builder(self.task_def_template)  # type: ignore
+        self.task_def = self.task_definition_builder(self.task_def_template)
 
     @classmethod
     def task_definition_builder(
@@ -90,7 +90,7 @@ class WorkerImpl(ABC):
         # Transform dict to TaskDefinition object use default values in necessary
         task_def = TaskDefinition(**params)
 
-        for key, value in task_def_template:  # type: ignore
+        for key, value in task_def_template: # type: ignore
             if value.default is not None and task_def.__getattribute__(key) is None:
                 task_def.__setattr__(key, value.default)
 
