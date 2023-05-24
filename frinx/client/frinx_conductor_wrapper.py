@@ -39,13 +39,13 @@ RawTaskIO: TypeAlias = dict[str, Any]
 @dataclass
 class RegisteredWorkerTask:
     task_type: str
-    exec_function: Any
+    exec_function: Callable[[Any], Any]
 
 
 @dataclass
 class NextWorkerTask:
     task_type: str
-    exec_function: str | None
+    exec_function: Callable[[Any], Any]
     poll_uuid: uuid.UUID | None
 
 
@@ -226,7 +226,7 @@ class FrinxConductorWrapper:
             self.handle_task_exception(task)
             return None
 
-    def register(self, task_type: str, task_definition: RawTaskIO, exec_function: Any) -> None:
+    def register(self, task_type: str, task_definition: RawTaskIO, exec_function: Callable[[Any], Any]) -> None:
         if task_definition is None:
             task_definition = copy.deepcopy(DEFAULT_TASK_DEFINITION)
         else:

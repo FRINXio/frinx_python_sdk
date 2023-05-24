@@ -1,8 +1,7 @@
-from typing import Any
 
 from frinx.common.conductor_enums import TaskResultStatus
+from frinx.common.type_aliases import DictAny
 from frinx.common.worker.service import ServiceWorkersImpl
-from frinx.common.worker.task import Task
 from frinx.common.worker.task_def import TaskDefinition
 from frinx.common.worker.task_def import TaskInput
 from frinx.common.worker.task_def import TaskOutput
@@ -23,13 +22,20 @@ class SnapshotManager(ServiceWorkersImpl):
             node_ids: list[str]
             snapshot_name: str
             transaction_id: str
+            uniconfig_server_id: str | None = None
             uniconfig_url_base: str | None = None
 
         class WorkerOutput(TaskOutput):
-            output: dict[str, Any]
+            output: DictAny
 
-        def execute(self, task: Task) -> TaskResult:
-            response = create_snapshot(**task.input_data)
+        def execute(self, worker_input: WorkerInput) -> TaskResult:
+            response = create_snapshot(
+                node_ids=worker_input.node_ids,
+                snapshot_name=worker_input.snapshot_name,
+                transaction_id=worker_input.transaction_id,
+                uniconfig_server_id=worker_input.uniconfig_server_id,
+                uniconfig_url_base=worker_input.uniconfig_url_base
+            )
             return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
 
     class DeleteSnapshot(WorkerImpl):
@@ -40,13 +46,19 @@ class SnapshotManager(ServiceWorkersImpl):
         class WorkerInput(TaskInput):
             snapshot_name: str
             transaction_id: str
+            uniconfig_server_id: str | None = None
             uniconfig_url_base: str | None = None
 
         class WorkerOutput(TaskOutput):
-            output: dict[str, Any]
+            output: DictAny
 
-        def execute(self, task: Task) -> TaskResult:
-            response = delete_snapshot(**task.input_data)
+        def execute(self, worker_input: WorkerInput) -> TaskResult:
+            response = delete_snapshot(
+                snapshot_name=worker_input.snapshot_name,
+                transaction_id=worker_input.transaction_id,
+                uniconfig_server_id=worker_input.uniconfig_server_id,
+                uniconfig_url_base=worker_input.uniconfig_url_base
+            )
             return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
 
     class ReplaceConfigWithSnapshot(WorkerImpl):
@@ -58,11 +70,18 @@ class SnapshotManager(ServiceWorkersImpl):
             snapshot_name: str
             node_ids: list[str]
             transaction_id: str
+            uniconfig_server_id: str | None = None
             uniconfig_url_base: str | None = None
 
         class WorkerOutput(TaskOutput):
-            output: dict[str, Any]
+            output: DictAny
 
-        def execute(self, task: Task) -> TaskResult:
-            response = replace_config_with_snapshot(**task.input_data)
+        def execute(self, worker_input: WorkerInput) -> TaskResult:
+            response = replace_config_with_snapshot(
+                snapshot_name=worker_input.snapshot_name,
+                node_ids=worker_input.node_ids,
+                transaction_id=worker_input.transaction_id,
+                uniconfig_server_id=worker_input.uniconfig_server_id,
+                uniconfig_url_base=worker_input.uniconfig_url_base
+            )
             return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())

@@ -9,6 +9,7 @@ from frinx.common.frinx_rest import REPLACE_CONFIG_WITH_OPERATIONAL_URL
 from frinx.common.frinx_rest import SYNC_FROM_NETWORK_URL
 from frinx.common.frinx_rest import UNICONFIG_HEADERS
 from frinx.common.frinx_rest import UNICONFIG_URL_BASE
+from frinx.common.type_aliases import DictAny
 from frinx.common.util import normalize_base_url
 
 
@@ -29,7 +30,7 @@ def create_transaction(
     Returns:
         Http response.
     """
-    params = {}
+    params: DictAny = {}
     if transaction_timeout is not None:
         params['timeout'] = transaction_timeout
 
@@ -68,9 +69,10 @@ def close_transaction(
         base_url = uniconfig_url_base
 
     url = normalize_base_url(base_url) + CLOSE_TRANSACTION_URL
+    cookies: DictAny = {'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id}
     response = requests.post(
         url=url,
-        cookies={'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id},
+        cookies=cookies,
         headers=UNICONFIG_HEADERS
     )
     response.raise_for_status()
@@ -103,11 +105,8 @@ def commit_transaction(
         base_url = uniconfig_url_base
 
     url = normalize_base_url(base_url) + COMMIT_TRANSACTION_URL
-
     # Input with target nodes will be deprecated in the future, Uniconfig is able to track modified nodes by itself
-    response = requests.post(
-        url=url,
-        data=json.dumps({
+    data = json.dumps({
             'input': {
                 'do-confirmed-commit': confirmed_commit,
                 'do-validate': validate_commit,
@@ -115,8 +114,12 @@ def commit_transaction(
                     'node': []
                 }
             }
-        }),
-        cookies={'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id},
+        })
+    cookies: DictAny = {'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id}
+    response = requests.post(
+        url=url,
+        data=data,
+        cookies=cookies,
         headers=UNICONFIG_HEADERS)
 
     response.raise_for_status()
@@ -147,6 +150,7 @@ def replace_config_with_operational(
         base_url = uniconfig_url_base
 
     url = normalize_base_url(base_url) + REPLACE_CONFIG_WITH_OPERATIONAL_URL
+    cookies: DictAny = {'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id}
     response = requests.post(
         url,
         data=json.dumps(
@@ -158,7 +162,7 @@ def replace_config_with_operational(
                 }
             }
         ),
-        cookies={'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id},
+        cookies=cookies,
         headers=UNICONFIG_HEADERS
     )
 
@@ -191,6 +195,7 @@ def sync_from_network(
         base_url = uniconfig_url_base
 
     url = normalize_base_url(base_url) + SYNC_FROM_NETWORK_URL
+    cookies: DictAny = {'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id}
     response = requests.post(
         url,
         data=json.dumps(
@@ -202,7 +207,7 @@ def sync_from_network(
                 }
             }
         ),
-        cookies={'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id},
+        cookies=cookies,
         headers=UNICONFIG_HEADERS
     )
 

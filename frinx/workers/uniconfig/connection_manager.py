@@ -1,9 +1,8 @@
-from typing import Any
 from typing import Literal
 
 from frinx.common.conductor_enums import TaskResultStatus
+from frinx.common.type_aliases import DictAny
 from frinx.common.worker.service import ServiceWorkersImpl
-from frinx.common.worker.task import Task
 from frinx.common.worker.task_def import TaskDefinition
 from frinx.common.worker.task_def import TaskInput
 from frinx.common.worker.task_def import TaskOutput
@@ -22,14 +21,19 @@ class ConnectionManager(ServiceWorkersImpl):
         class WorkerInput(TaskInput):
             node_id: str
             connection_type: Literal['netconf', 'cli']
-            install_params: dict[str, Any] | None = None,
+            install_params: DictAny
             uniconfig_url_base: str | None = None
 
         class WorkerOutput(TaskOutput):
-            output: dict[str, Any]
+            output: DictAny
 
-        def execute(self, task: Task) -> TaskResult:
-            response = install_node(**task.input_data)
+        def execute(self, worker_input: WorkerInput) -> TaskResult:
+            response = install_node(
+                node_id=worker_input.node_id,
+                connection_type=worker_input.connection_type,
+                install_params=worker_input.install_params,
+                uniconfig_url_base=worker_input.uniconfig_url_base
+            )
             return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
 
     class UninstallNode(WorkerImpl):
@@ -43,8 +47,12 @@ class ConnectionManager(ServiceWorkersImpl):
             uniconfig_url_base: str | None = None
 
         class WorkerOutput(TaskOutput):
-            output: dict[str, Any]
+            output: DictAny
 
-        def execute(self, task: Task) -> TaskResult:
-            response = uninstall_node(**task.input_data)
+        def execute(self, worker_input: WorkerInput) -> TaskResult:
+            response = uninstall_node(
+                node_id=worker_input.node_id,
+                connection_type=worker_input.connection_type,
+                uniconfig_url_base=worker_input.uniconfig_url_base
+            )
             return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())

@@ -1,5 +1,4 @@
 import json
-from typing import Any
 from typing import Literal
 
 import requests
@@ -8,13 +7,14 @@ from frinx.common.frinx_rest import INSTALL_NODE_URL
 from frinx.common.frinx_rest import UNICONFIG_HEADERS
 from frinx.common.frinx_rest import UNICONFIG_URL_BASE
 from frinx.common.frinx_rest import UNINSTALL_NODE_URL
+from frinx.common.type_aliases import DictAny
 from frinx.common.util import normalize_base_url
 
 
 def install_node(
     node_id: str,
     connection_type: Literal['netconf', 'cli'],
-    install_params: dict[str, Any] | None = None,
+    install_params: DictAny,
     uniconfig_url_base: str | None = None
 ) -> requests.Response:
     """
@@ -34,7 +34,7 @@ def install_node(
         base_url = uniconfig_url_base
 
     url = normalize_base_url(base_url) + INSTALL_NODE_URL
-    data = {
+    data: DictAny = {
         'input': {
             'node-id': node_id,
             connection_type: {
