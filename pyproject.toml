@@ -8,6 +8,7 @@ influxdb_client = "*"
 requests = "*"
 python_graphql_client = "*"
 pydantic = "*"
+prometheus-client = "^0.16.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^6.0.0"
