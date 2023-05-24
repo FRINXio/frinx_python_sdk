@@ -38,10 +38,11 @@ class Metrics(metaclass=MetricsSingletonMeta):
     settings: MetricsSettings
 
     def __init__(self, settings: MetricsSettings | None = None):
-
         if settings is not None:
             self.settings = settings
             self.__init_collector()
+        else:
+            self.settings = MetricsSettings(metrics_enabled=False)
 
     def __init_collector(self) -> None:
         if self.settings.metrics_enabled:
