@@ -14,7 +14,7 @@ from frinx.common.util import normalize_base_url
 def install_node(
     node_id: str,
     connection_type: Literal['netconf', 'cli'],
-    install_params: dict[str, Any] | None = None,
+    install_params: dict[str, Any],
     uniconfig_url_base: str | None = None
 ) -> requests.Response:
     """

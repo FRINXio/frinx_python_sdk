@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from pydantic import Extra
 from pydantic import Field
 
+from frinx.common.type_aliases import DictAny
 from frinx.common.util import snake_to_camel_case
 
 WorkflowTask: TypeAlias = dict[str, str]
@@ -12,7 +13,7 @@ TaskDef: TypeAlias = dict[str, str]
 
 
 class Task(BaseModel):
-    input_data: dict[str, object] = Field(default={})
+    input_data: DictAny = Field(default={})
     workflow_task: Any = Field(default=None)
     task_definition: Any = Field(default=None)
 

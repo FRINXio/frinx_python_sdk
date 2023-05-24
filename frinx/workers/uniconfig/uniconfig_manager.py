@@ -1,6 +1,7 @@
 from typing import Any
 
 from frinx.common.conductor_enums import TaskResultStatus
+from frinx.common.type_aliases import DictAny
 from frinx.common.worker.service import ServiceWorkersImpl
 from frinx.common.worker.task import Task
 from frinx.common.worker.task_def import TaskDefinition
@@ -32,7 +33,7 @@ class UniconfigManager(ServiceWorkersImpl):
 
         def execute(self, task: Task) -> TaskResult:
             response = create_transaction(**task.input_data)
-            cookies = response.cookies.get_dict()
+            cookies: DictAny = response.cookies.get_dict()
             transaction_id: str = cookies['UNICONFIGTXID']
             uniconfig_server_id: str = cookies.get('uniconfig_server_id')
             return TaskResult(

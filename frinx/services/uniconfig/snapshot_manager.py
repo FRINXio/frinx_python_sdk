@@ -7,6 +7,7 @@ from frinx.common.frinx_rest import DELETE_SNAPSHOT_URL
 from frinx.common.frinx_rest import REPLACE_CONFIG_WITH_SNAPSHOT_URL
 from frinx.common.frinx_rest import UNICONFIG_HEADERS
 from frinx.common.frinx_rest import UNICONFIG_URL_BASE
+from frinx.common.type_aliases import DictAny
 from frinx.common.util import normalize_base_url
 
 
@@ -36,6 +37,7 @@ def create_snapshot(
         base_url = uniconfig_url_base
 
     url = normalize_base_url(base_url) + CREATE_SNAPSHOT_URL
+    cookies: DictAny = {'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id}
     response = requests.post(
         url,
         data=json.dumps(
@@ -48,7 +50,7 @@ def create_snapshot(
                 }
             }
         ),
-        cookies={'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id},
+        cookies=cookies,
         headers=UNICONFIG_HEADERS
     )
     response.raise_for_status()
@@ -79,6 +81,7 @@ def delete_snapshot(
         base_url = uniconfig_url_base
 
     url = normalize_base_url(base_url) + DELETE_SNAPSHOT_URL
+    cookies: DictAny = {'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id}
     response = requests.post(
         url,
         data=json.dumps(
@@ -88,7 +91,7 @@ def delete_snapshot(
                 }
             }
         ),
-        cookies={'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id},
+        cookies=cookies,
         headers=UNICONFIG_HEADERS
     )
 
@@ -122,6 +125,7 @@ def replace_config_with_snapshot(
         base_url = uniconfig_url_base
 
     url = normalize_base_url(base_url) + REPLACE_CONFIG_WITH_SNAPSHOT_URL
+    cookies: DictAny = {'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id}
     response = requests.post(
         url,
         data=json.dumps(
@@ -134,7 +138,7 @@ def replace_config_with_snapshot(
                 }
             }
         ),
-        cookies={'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id},
+        cookies=cookies,
         headers=UNICONFIG_HEADERS
     )
 

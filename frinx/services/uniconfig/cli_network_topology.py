@@ -6,6 +6,7 @@ from frinx.common.frinx_rest import CLI_EXECUTE_AND_READ_URL
 from frinx.common.frinx_rest import CLI_EXECUTE_URL
 from frinx.common.frinx_rest import UNICONFIG_HEADERS
 from frinx.common.frinx_rest import UNICONFIG_URL_BASE
+from frinx.common.type_aliases import DictAny
 from frinx.common.util import normalize_base_url
 
 
@@ -37,6 +38,7 @@ def execute_and_read(
         base_url = uniconfig_url_base
 
     url = normalize_base_url(base_url) + CLI_EXECUTE_AND_READ_URL.format(node_id)
+    cookies: DictAny = {'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id}
     response = requests.post(
         url,
         data=json.dumps(
@@ -47,7 +49,7 @@ def execute_and_read(
                 }
             }
         ),
-        cookies={'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id},
+        cookies=cookies,
         headers=UNICONFIG_HEADERS
     )
 
@@ -81,6 +83,7 @@ def execute(
         base_url = uniconfig_url_base
 
     url = normalize_base_url(base_url) + CLI_EXECUTE_URL.format(node_id)
+    cookies: DictAny = {'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id}
     response = requests.post(
         url,
         data=json.dumps(
@@ -90,7 +93,7 @@ def execute(
                 }
             }
         ),
-        cookies={'UNICONFIGTXID': transaction_id, 'uniconfig_server_id': uniconfig_server_id},
+        cookies=cookies,
         headers=UNICONFIG_HEADERS
     )
 
