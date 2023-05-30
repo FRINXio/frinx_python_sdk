@@ -1,41 +1,46 @@
 # Frinx Python SDK
+This package contains implementation of [Workflow Manager](https://docs.frinx.io/frinx-workflow-manager/introduction/)
+client, building blocks for task and workflow definitions and ready-to-use implementations of tasks and workflows,
+which cover basic use cases of [FRINX MACHINE](https://docs.frinx.io/) components.
 
-Some basic information about package ["TODO]
+## Environment set up
+1. Install poetry
+    ```sh
+    sudo apt-get -y install pipx
+    pipx install poetry
+    ```
 
+2. Install dependencies
+     ```sh
+    poetry install
+    ```
 
-## Development
+## How to contribute
+1. Create new feature branch.
+   ```sh
+   git checkout -b <branch_name>
+   ```
 
-### Poetry useful commands
+2. Add your changes.
+   ```sh
+   git add <file>
+   ```
 
-#### Virtual Environment activate
-```shell
-# Add dependency
-poetry env use /path/to/python
-# If you have the python executable in your PATH you can use it:
-poetry env use python3.10
+3. OPTIONAL - Run pre-commit. Pre-commit triggers linting and static type checker hooks. These checks are also
+   triggered by GitHub actions when a PR is created or updated. All errors and warnings raised by linters and
+   type checkers must be fixed before the PR can be merged.
+   ```sh
+   poetry shell
+   pre-commit
+   ```
 
-# Show env info
-poetry env info
-```
+4. Commit your changes. We do not enforce commit message structure, but you should follow these
+   [best practices](https://cbea.ms/git-commit/).
+   ```sh
+   git commit
+   ```
 
-#### Add dependency
-```shell
-poetry init --python
-```
-
-#### Dependency management
-```shell
-# Add dependency
-poetry add django@^4.0.0
-
-# Remove dependency
-poetry remove django
-```
-
-#### Package build
-```shell
-poetry build
-
-# Verbose output
-poetry build -vvv
-```
+5. Push your branch to remote repository.
+   ```sh
+   git push -u origin <branch_name>
+   ```
