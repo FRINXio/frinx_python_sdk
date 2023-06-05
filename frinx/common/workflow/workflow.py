@@ -122,7 +122,7 @@ class WorkflowImpl(BaseModel, ABC):
             self.input_parameters.append(
                 json.dumps(
                     {
-                        wf_input[0]: {
+                        wf_input[1].name: {
                             'value': wf_input[1].frontend_default_value,
                             'description': wf_input[1].description,
                             'type': wf_input[1].type,
@@ -131,7 +131,7 @@ class WorkflowImpl(BaseModel, ABC):
                     }
                 )
             )
-            self.input_template[wf_input[0]] = wf_input[1].frontend_default_value
+            self.input_template[wf_input[1].name] = wf_input[1].frontend_default_value
         return workflow_inputs
 
     def description_builder(self) -> None:
