@@ -17,8 +17,8 @@ from frinx.services.uniconfig.uniconfig_manager import sync_from_network
 class UniconfigManager(ServiceWorkersImpl):
     class CreateTransaction(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = 'Create_transaction_RPC'
-            description = 'Create Uniconfig transaction'
+            name: str = 'Create_transaction_RPC'
+            description: str = 'Create Uniconfig transaction'
 
         class WorkerInput(TaskInput):
             transaction_timeout: int | None = None
@@ -45,8 +45,8 @@ class UniconfigManager(ServiceWorkersImpl):
 
     class CloseTransaction(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = 'Close_transaction_RPC'
-            description = 'Close Uniconfig transaction'
+            name: str = 'Close_transaction_RPC'
+            description: str = 'Close Uniconfig transaction'
 
         class WorkerInput(TaskInput):
             transaction_id: str
@@ -58,8 +58,8 @@ class UniconfigManager(ServiceWorkersImpl):
 
     class CommitTransaction(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = 'Commit_transaction_RPC'
-            description = 'Commit Uniconfig transaction'
+            name: str = 'Commit_transaction_RPC'
+            description: str = 'Commit Uniconfig transaction'
 
         class WorkerInput(TaskInput):
             transaction_id: str
@@ -84,8 +84,8 @@ class UniconfigManager(ServiceWorkersImpl):
 
     class ReplaceConfigWithOperational(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = 'Replace_config_with_operational_RPC'
-            description = 'Replace Uniconfig CONFIG datastore with OPER datastore'
+            name: str = 'Replace_config_with_operational_RPC'
+            description: str = 'Replace Uniconfig CONFIG datastore with OPER datastore'
 
         class WorkerInput(TaskInput):
             node_ids: list[str]
@@ -107,8 +107,8 @@ class UniconfigManager(ServiceWorkersImpl):
 
     class SyncFromNetwork(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = 'Sync_from_network_RPC'
-            description = 'Synchronize configuration from network and the UniConfig nodes'
+            name: str = 'Sync_from_network_RPC'
+            description: str = 'Synchronize configuration from network and the UniConfig nodes'
 
         class WorkerInput(TaskInput):
             node_ids: list[str]
