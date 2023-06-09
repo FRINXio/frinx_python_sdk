@@ -14,7 +14,7 @@ class WorkflowStatus(str, Enum):
     PAUSED = 'PAUSED'
     RUNNING = 'RUNNING'
     TERMINATED = 'TERMINATED'
-    TIMEOUT_OUT = 'TIMED_OUT'
+    TIMED_OUT = 'TIMED_OUT'
 
 
 class TimeoutPolicy(str, Enum):
