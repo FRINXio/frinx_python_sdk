@@ -1,4 +1,6 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import Optional
 
 from pydantic import BaseModel
 from pydantic import Extra
@@ -7,6 +9,9 @@ from pydantic import Field
 from frinx.common.conductor_enums import RetryLogic
 from frinx.common.conductor_enums import TimeoutPolicy
 from frinx.common.frinx_rest import X_FROM
+from frinx.common.type_aliases import DictAny
+from frinx.common.type_aliases import ListAny
+from frinx.common.type_aliases import ListStr
 from frinx.common.util import snake_to_camel_case
 
 
@@ -26,31 +31,31 @@ class TaskOutput(BaseModel):
 
 
 class BaseTaskdef(BaseModel):
-    name: str | None
-    description: str | None
-    owner_app: str | None = Field(default=None)
-    create_time: int | None = Field(default=None)
-    update_time: int | None = Field(default=None)
-    created_by: str | None = Field(default=None)
-    updated_by: str | None = Field(default=None)
-    retry_count: int | None = Field(default=None)
-    timeout_seconds: int | None = Field(default=None)
-    input_keys: list[str] | None = Field(default=None)
-    output_keys: list[str] | None = Field(default=None)
-    timeout_policy: TimeoutPolicy | None = Field(default=None)
-    retry_logic: RetryLogic | None = Field(default=None)
-    retry_delay_seconds: int | None = Field(default=None)
-    response_timeout_seconds: int | None = Field(default=None)
-    concurrent_exec_limit: int | None = Field(default=None)
-    input_template: dict[str, Any] | None = Field(default=None)
-    rate_limit_per_frequency: int | None = Field(default=None)
-    rate_limit_frequency_in_seconds: int | None = Field(default=None)
-    isolation_group_id: str | None = Field(default=None)
-    execution_name_space: str | None = Field(default=None)
-    owner_email: str | None = Field(default=None)
-    poll_timeout_seconds: int | None = Field(default=None)
-    backoff_scale_factor: int | None = Field(default=None)
-    limit_to_thread_count: int | None = Field(default=None)
+    name: Optional[str]
+    description: Optional[str]
+    owner_app: Optional[str] = Field(default=None)
+    create_time: Optional[int] = Field(default=None)
+    update_time: Optional[int] = Field(default=None)
+    created_by: Optional[str] = Field(default=None)
+    updated_by: Optional[str] = Field(default=None)
+    retry_count: Optional[int] = Field(default=None)
+    timeout_seconds: Optional[int] = Field(default=None)
+    input_keys: Optional[ListStr] = Field(default=None)
+    output_keys: Optional[ListStr] = Field(default=None)
+    timeout_policy: Optional[TimeoutPolicy] = Field(default=None)
+    retry_logic: Optional[RetryLogic] = Field(default=None)
+    retry_delay_seconds: Optional[int] = Field(default=None)
+    response_timeout_seconds: Optional[int] = Field(default=None)
+    concurrent_exec_limit: Optional[int] = Field(default=None)
+    input_template: Optional[DictAny] = Field(default=None)
+    rate_limit_per_frequency: Optional[int] = Field(default=None)
+    rate_limit_frequency_in_seconds: Optional[int] = Field(default=None)
+    isolation_group_id: Optional[str] = Field(default=None)
+    execution_name_space: Optional[str] = Field(default=None)
+    owner_email: Optional[str] = Field(default=None)
+    poll_timeout_seconds: Optional[int] = Field(default=None)
+    backoff_scale_factor: Optional[int] = Field(default=None)
+    limit_to_thread_count: Optional[int] = Field(default=None)
 
     class Config:
         allow_mutation = False
@@ -64,8 +69,8 @@ class BaseTaskdef(BaseModel):
 class TaskDefinition(BaseTaskdef):
     name: str
     description: str
-    labels: list[object] | None = Field(default=None)
-    rbac: list[object] | None = Field(default=None)
+    labels: Optional[ListAny] = Field(default=None)
+    rbac: Optional[ListAny] = Field(default=None)
 
     class Config:
         allow_mutation = True

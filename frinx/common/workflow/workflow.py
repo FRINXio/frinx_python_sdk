@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import json
 from abc import ABC
 from abc import abstractmethod
 from enum import Enum
 from typing import Any
 from typing import Final
+from typing import Optional
 
 from pydantic import BaseModel
 from pydantic import Extra
@@ -11,6 +14,7 @@ from pydantic import Field
 
 from frinx.common.conductor_enums import TimeoutPolicy
 from frinx.common.import_workflows import register_workflow
+from frinx.common.type_aliases import ListAny
 from frinx.common.util import jsonify_description
 from frinx.common.util import snake_to_camel_case
 from frinx.common.workflow.task import WorkflowTaskImpl
@@ -34,10 +38,10 @@ class _UndefinedType:
     def __repr__(self) -> str:
         return '<not-defined>'
 
-    def __copy__(self) -> '_UndefinedType':
+    def __copy__(self) -> _UndefinedType:
         return self
 
-    def __deepcopy__(self, _: Any) -> '_UndefinedType':
+    def __deepcopy__(self, _: Any) -> _UndefinedType:
         return self
 
 
@@ -48,10 +52,10 @@ class WorkflowInputField(BaseModel):
     name: str
     frontend_default_value: Any = Field(UNDEFINED, alias='value')
     description: str = ''
-    options: list[Any] | None = None
+    options: Optional[ListAny] = None
     type: Any
     frontend_type: FrontendWFInputFieldType | None = None
-    wf_input: str = Field(default=None)
+    wf_input: Optional[str] = Field(default=None)
 
     class Config:
         min_anystr_length = 1
@@ -98,17 +102,17 @@ class WorkflowImpl(BaseModel, ABC):
     timeout_policy: TimeoutPolicy = Field(default=TimeoutPolicy.TIME_OUT_WORKFLOW)
     timeout_seconds: int = Field(default=60)
 
-    owner_app: str = Field(default=None)
-    create_time: int = Field(default=None)
-    update_time: int = Field(default=None)
-    created_by: str = Field(default=None)
-    updated_by: str = Field(default=None)
-    failure_workflow: str = Field(default=None)
-    schema_version: int = Field(default=None)
-    workflow_status_listener_enabled: bool = Field(default=None)
-    owner_email: str = Field(default=None)
-    variables: dict[str, object] = Field(default=None)
-    input_template: dict[str, object] = Field(default={})
+    owner_app: Optional[str] = Field(default=None)
+    create_time: Optional[int] = Field(default=None)
+    update_time: Optional[int] = Field(default=None)
+    created_by: Optional[str] = Field(default=None)
+    updated_by: Optional[str] = Field(default=None)
+    failure_workflow: Optional[str] = Field(default=None)
+    schema_version: Optional[int] = Field(default=None)
+    workflow_status_listener_enabled: Optional[bool] = Field(default=None)
+    owner_email: Optional[str] = Field(default=None)
+    variables: Optional[dict[str, Any]] = Field(default=None)
+    input_template: dict[str, Any] = Field(default={})
 
     def __init__(self, **data: Any):
         super().__init__(**data)
@@ -142,7 +146,13 @@ class WorkflowImpl(BaseModel, ABC):
         register_workflow(cls().json(by_alias=True, exclude_none=True), overwrite)
 
     @abstractmethod
-    def workflow_builder(self, workflow_inputs: WorkflowInput) -> None:
+    def workflow_builder(self, workflow_inputs: Any) -> None:
+        # TODO: workflow_inputs needs to be a reference to WorkflowInput child in it's namespace
+        # error: Argument 1 of "workflow_builder" is incompatible with supertype "WorkflowImpl";
+        # supertype defines the argument type as "WorkflowInput"
+        # NOTE: This violates the Liskov substitution principle
+        # NOTE: See https://mypy.readthedocs.io/en/stable/common_issues.html#incompatible-overrides
+        # https://discuss.python.org/t/a-way-to-typehint-a-return-type-in-parent-based-on-return-type-of-a-child/17020
         pass
 
     class Config:
