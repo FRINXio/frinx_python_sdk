@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Any
+from typing import Optional
 from typing import TypeAlias
 
 from pydantic import BaseModel
@@ -61,28 +62,28 @@ class WorkflowTaskImpl(BaseModel):
     input_parameters: Any | dict[str, Any] = Field(default={})
 
     # OPTIONAL
-    description: str = Field(default=None)
-    dynamic_task_name_param: str = Field(default=None)
-    case_value_param: str = Field(default=None)
-    case_expression: str = Field(default=None)
-    script_expression: str = Field(default=None)
-    decision_cases: dict[str, list[WorkflowTask]] | dict[str, list[Any]] = Field(default=None)
-    dynamic_fork_join_tasks_param: str = Field(default=None)
-    dynamic_fork_tasks_param: str = Field(default=None)
-    dynamic_fork_tasks_input_param_name: str = Field(default=None)
-    fork_tasks: list[list[WorkflowTask]] | list[list[Any]] = Field(default=None)
-    sub_workflow_param: dict[str, Any] | Any = Field(default=None)
-    join_on: list[str] = Field(default=None)
-    sink: str = Field(default=None)
-    task_definition: TaskDef = Field(default=None)
-    rate_limited: StrictBool = Field(default=None)
-    default_exclusive_join_task: list[str] = Field(default=None)
-    loop_condition: str = Field(default=None)
-    loop_over: list[Any] = Field(default=None)
-    retry_count: int = Field(default=None)
-    evaluator_type: str = Field(default=None)
-    expression: str = Field(default=None)
-    workflow_task_type: str = Field(default=None)
+    description: Optional[str] = Field(default=None)
+    dynamic_task_name_param: Optional[str] = Field(default=None)
+    case_value_param: Optional[str] = Field(default=None)
+    case_expression: Optional[str] = Field(default=None)
+    script_expression: Optional[str] = Field(default=None)
+    decision_cases: Optional[dict[str, list[WorkflowTask]] | dict[str, list[Any]]] = Field(default=None)
+    dynamic_fork_join_tasks_param: Optional[str] = Field(default=None)
+    dynamic_fork_tasks_param: Optional[str] = Field(default=None)
+    dynamic_fork_tasks_input_param_name: Optional[str] = Field(default=None)
+    fork_tasks: Optional[list[list[Any]]] = Field(default=None)
+    sub_workflow_param: Optional[Any] = Field(default=None)
+    join_on: Optional[list[str]] = Field(default=None)
+    sink: Optional[str] = Field(default=None)
+    task_definition: Optional[TaskDef] = Field(default=None)
+    rate_limited: Optional[StrictBool] = Field(default=None)
+    default_exclusive_join_task: Optional[list[str]] = Field(default=None)
+    loop_condition: Optional[str] = Field(default=None)
+    loop_over: Optional[list[Any]] = Field(default=None)
+    retry_count: Optional[int] = Field(default=None)
+    evaluator_type: Optional[str] = Field(default=None)
+    expression: Optional[str] = Field(default=None)
+    workflow_task_type: Optional[str] = Field(default=None)
 
     class Config:
         alias_generator = snake_to_camel_case
@@ -97,10 +98,10 @@ class WorkflowTaskImpl(BaseModel):
 
 
 class DoWhileTask(WorkflowTaskImpl):
-    type = TaskType.DO_WHILE
+    type: TaskType = TaskType.DO_WHILE
     loop_condition: str
     loop_over: list[WorkflowTaskImpl]
-    evaluator_type = DoWhileEvaluatorType.JAVASCRIPT
+    evaluator_type: DoWhileEvaluatorType = DoWhileEvaluatorType.JAVASCRIPT
 
 
 class DynamicForkTaskInputParameters(BaseModel):
@@ -167,7 +168,7 @@ class DynamicForkArraysTaskInputParameters(BaseModel):
 
 class DynamicForkTask(WorkflowTaskImpl):
     # TODO why not render in UI?
-    type = TaskType.FORK_JOIN_DYNAMIC
+    type: TaskType = TaskType.FORK_JOIN_DYNAMIC
     dynamic_fork_tasks_param: str = Field(default='dynamicTasks')
     dynamic_fork_tasks_input_param_name: str = Field(default='dynamicTasksInput')
     input_parameters: DynamicForkArraysTaskInputParameters | DynamicForkTaskInputParameters \
@@ -175,7 +176,7 @@ class DynamicForkTask(WorkflowTaskImpl):
 
 
 class ForkTask(WorkflowTaskImpl):
-    type = TaskType.FORK_JOIN
+    type: TaskType = TaskType.FORK_JOIN
     fork_tasks: list[list[WorkflowTaskImpl]]
 
 
@@ -192,7 +193,7 @@ class HttpMethod(str, Enum):
 
 
 class HumanTask(WorkflowTaskImpl):
-    type = TaskType.HUMAN
+    type: TaskType = TaskType.HUMAN
 
 
 class InlineTaskInputParameters(BaseModel):
@@ -219,7 +220,7 @@ class InlineTaskInputParameters(BaseModel):
 
 
 class InlineTask(WorkflowTaskImpl):
-    type = TaskType.INLINE
+    type: TaskType = TaskType.INLINE
     input_parameters: InlineTaskInputParameters
 
 
@@ -240,7 +241,7 @@ class LambdaTaskInputParameters(BaseModel):
 
 
 class LambdaTask(WorkflowTaskImpl):
-    type = TaskType.LAMBDA
+    type: TaskType = TaskType.LAMBDA
     input_parameters: LambdaTaskInputParameters
 
 
@@ -249,7 +250,7 @@ class WaitDurationTaskInputParameters(BaseModel):
 
 
 class WaitDurationTask(WorkflowTaskImpl):
-    type = TaskType.WAIT
+    type: TaskType = TaskType.WAIT
     input_parameters: WaitDurationTaskInputParameters
 
 
@@ -258,7 +259,7 @@ class WaitUntilTaskInputParameters(BaseModel):
 
 
 class WaitUntilTask(WorkflowTaskImpl):
-    type = TaskType.WAIT
+    type: TaskType = TaskType.WAIT
     input_parameters: WaitUntilTaskInputParameters
 
 
@@ -277,13 +278,13 @@ class TerminateTaskInputParameters(BaseModel):
 
 
 class TerminateTask(WorkflowTaskImpl):
-    type = TaskType.TERMINATE
+    type: TaskType = TaskType.TERMINATE
     input_parameters: TerminateTaskInputParameters
 
 
 class StartWorkflowTaskPlainInputParameters(BaseModel):
     name: str
-    version: int = Field(default=None)
+    version: Optional[int] = Field(default=None)
     input: dict[str, object] | None = {}
     correlation_id: str | None = Field(alias='correlationId')
 
@@ -326,7 +327,7 @@ class StartWorkflowTaskInputParameters(BaseModel):
 
 
 class StartWorkflowTask(WorkflowTaskImpl):
-    type = TaskType.START_WORKFLOW
+    type: TaskType = TaskType.START_WORKFLOW
     input_parameters: StartWorkflowTaskInputParameters
 
 
@@ -355,7 +356,7 @@ class SwitchTaskValueParamInputParameters(BaseModel):
 
 
 class SwitchTask(WorkflowTaskImpl):
-    type = TaskType.SWITCH
+    type: TaskType = TaskType.SWITCH
     default_case: list[WorkflowTaskImpl] | None = Field(default=[])  # type: ignore[assignment]
     decision_cases: dict[str, list[WorkflowTaskImpl]]
     evaluator_type: SwitchEvaluatorType = Field(default=SwitchEvaluatorType.JAVASCRIPT)
@@ -374,7 +375,7 @@ class DecisionTaskInputParameters(BaseModel):
 
 
 class DecisionTask(WorkflowTaskImpl):
-    type = TaskType.DECISION
+    type: TaskType = TaskType.DECISION
     default_case: list[WorkflowTaskImpl] = []
     decision_cases: dict[str, list[WorkflowTaskImpl]]
     case_expression: str
@@ -386,10 +387,10 @@ class DecisionCaseValueTaskInputParameters(BaseModel):
 
 
 class DecisionCaseValueTask(WorkflowTaskImpl):
-    type = TaskType.DECISION
+    type: TaskType = TaskType.DECISION
     default_case: list[WorkflowTaskImpl] = []
     decision_cases: dict[str, list[WorkflowTaskImpl]]
-    case_value_param = 'case_value_param'
+    case_value_param: str = 'case_value_param'
     input_parameters: DecisionCaseValueTaskInputParameters
 
 
@@ -406,14 +407,14 @@ class SubWorkflowInputParameters(BaseModel):
 class SubWorkflowParam(BaseModel):
     name: str
     version: int
-    task_to_domain: TaskToDomain = Field(default=None)
-    workflow_definition: WorkflowDef = Field(default=None)
+    task_to_domain: Optional[TaskToDomain] = Field(default=None)
+    workflow_definition: Optional[WorkflowDef] = Field(default=None)
 
 
 class SubWorkflowFromDefParam(BaseModel):
     name: type[Any]
-    task_to_domain: TaskToDomain = Field(default=None)
-    workflow_definition: WorkflowDef = Field(default=None)
+    task_to_domain: Optional[TaskToDomain] = Field(default=None)
+    workflow_definition: Optional[WorkflowDef] = Field(default=None)
 
     class Config:
         alias_generator = snake_to_camel_case
@@ -423,7 +424,7 @@ class SubWorkflowFromDefParam(BaseModel):
 
 
 class SubWorkflowTask(WorkflowTaskImpl):
-    type = TaskType.SUB_WORKFLOW
+    type: TaskType = TaskType.SUB_WORKFLOW
     sub_workflow_param: SubWorkflowParam | SubWorkflowFromDefParam
     input_parameters: SubWorkflowInputParameters
 
@@ -466,7 +467,7 @@ class SimpleTaskInputParameters(BaseModel):
 
 class SimpleTask(WorkflowTaskImpl):
     name: object | str  # type: ignore[assignment]
-    type = TaskType.SIMPLE
+    type: TaskType = TaskType.SIMPLE
     input_parameters: SimpleTaskInputParameters
 
     @root_validator(pre=True)
@@ -500,7 +501,7 @@ class SetVariableTaskInputParameters(BaseModel):
 
 
 class SetVariableTask(WorkflowTaskImpl):
-    type = TaskType.SET_VARIABLE
+    type: TaskType = TaskType.SET_VARIABLE
     input_parameters: SetVariableTaskInputParameters
 
 
@@ -511,7 +512,7 @@ class KafkaPublishTaskInputParameters(BaseModel):
     value: str
     request_timeout_ms: str
     max_block_ms: str
-    headers: dict[str, Any] = Field(default=None)
+    headers: Optional[dict[str, Any]] = Field(default=None)
     topic: str
 
     class Config:
@@ -522,7 +523,7 @@ class KafkaPublishTaskInputParameters(BaseModel):
 
 
 class KafkaPublishTask(WorkflowTaskImpl):
-    type = TaskType.KAFKA_PUBLISH
+    type: TaskType = TaskType.KAFKA_PUBLISH
     input_parameters: KafkaPublishTaskInputParameters
 
 
@@ -543,21 +544,21 @@ class JsonJqTaskInputParameters(BaseModel):
 
 
 class JsonJqTask(WorkflowTaskImpl):
-    type = TaskType.JSON_JQ_TRANSFORM
+    type: TaskType = TaskType.JSON_JQ_TRANSFORM
     input_parameters: JsonJqTaskInputParameters
 
 
 class JoinTask(WorkflowTaskImpl):
-    type = TaskType.JOIN
+    type: TaskType = TaskType.JOIN
     join_on: list[str] = []
 
 
 class ExclusiveJoinTask(WorkflowTaskImpl):
-    type = TaskType.EXCLUSIVE_JOIN
+    type: TaskType = TaskType.EXCLUSIVE_JOIN
     join_on: list[str] = []
 
 
 class EventTask(WorkflowTaskImpl):
-    type = TaskType.EVENT
+    type: TaskType = TaskType.EVENT
     sink: str
     async_complete: bool

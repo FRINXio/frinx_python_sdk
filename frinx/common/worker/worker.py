@@ -1,6 +1,5 @@
 import logging
 import time
-import typing
 from abc import ABC
 from abc import abstractmethod
 from typing import Any
@@ -104,7 +103,7 @@ class WorkerImpl(ABC):
         )
 
     @abstractmethod
-    def execute(self, worker_input: typing.Any) -> TaskResult:
+    def execute(self, worker_input: Any) -> TaskResult:
         # worker_input parameter has to be of type any, otherwise all other subclasses of WorkerImpl would
         # violate Liskov substitution principle.
         # https://mypy.readthedocs.io/en/stable/common_issues.html#incompatible-overrides
