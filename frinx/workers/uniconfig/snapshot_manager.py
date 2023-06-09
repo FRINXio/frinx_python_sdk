@@ -15,8 +15,8 @@ from frinx.services.uniconfig.snapshot_manager import replace_config_with_snapsh
 class SnapshotManager(ServiceWorkersImpl):
     class CreateSnapshot(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = 'Create_snapshot_RPC'
-            description = 'Create Uniconfig snapshot'
+            name: str = 'Create_snapshot_RPC'
+            description: str = 'Create Uniconfig snapshot'
 
         class WorkerInput(TaskInput):
             node_ids: list[str]
@@ -40,8 +40,8 @@ class SnapshotManager(ServiceWorkersImpl):
 
     class DeleteSnapshot(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = 'Delete_snapshot_RPC'
-            description = 'Delete Uniconfig snapshot'
+            name: str = 'Delete_snapshot_RPC'
+            description: str = 'Delete Uniconfig snapshot'
 
         class WorkerInput(TaskInput):
             snapshot_name: str
@@ -63,8 +63,8 @@ class SnapshotManager(ServiceWorkersImpl):
 
     class ReplaceConfigWithSnapshot(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = 'Replace_config_with_snapshot_RPC'
-            description = 'Replace Uniconfig CONFIG datastore with a snapshot'
+            name: str = 'Replace_config_with_snapshot_RPC'
+            description: str = 'Replace Uniconfig CONFIG datastore with a snapshot'
 
         class WorkerInput(TaskInput):
             snapshot_name: str

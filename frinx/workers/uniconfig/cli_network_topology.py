@@ -1,6 +1,7 @@
 from typing import Any
 
 from frinx.common.conductor_enums import TaskResultStatus
+from frinx.common.type_aliases import ListAny
 from frinx.common.worker.service import ServiceWorkersImpl
 from frinx.common.worker.task_def import TaskDefinition
 from frinx.common.worker.task_def import TaskInput
@@ -14,8 +15,8 @@ from frinx.services.uniconfig.cli_network_topology import execute_and_read
 class CliNetworkTopology(ServiceWorkersImpl):
     class ExecuteAndRead(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = 'Execute_and_read_RPC'
-            description = 'Run execute and read RPC'
+            name: str = 'Execute_and_read_RPC'
+            description: str = 'Run execute and read RPC'
 
         class WorkerInput(TaskInput):
             node_id: str
@@ -41,9 +42,9 @@ class CliNetworkTopology(ServiceWorkersImpl):
 
     class Execute(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = 'Execute_RPC'
-            description = 'Run execute RPC'
-            labels = ['UNICONFIG']
+            name: str = 'Execute_RPC'
+            description: str = 'Run execute RPC'
+            labels: ListAny = ['UNICONFIG']
 
         class WorkerInput(TaskInput):
             node_id: str

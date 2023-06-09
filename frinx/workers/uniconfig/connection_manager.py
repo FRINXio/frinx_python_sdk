@@ -15,8 +15,8 @@ from frinx.services.uniconfig.connection_manager import uninstall_node
 class ConnectionManager(ServiceWorkersImpl):
     class InstallNode(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = 'Install_node_RPC'
-            description = 'Install node to Uniconfig'
+            name: str = 'Install_node_RPC'
+            description: str = 'Install node to Uniconfig'
 
         class WorkerInput(TaskInput):
             node_id: str
@@ -38,8 +38,8 @@ class ConnectionManager(ServiceWorkersImpl):
 
     class UninstallNode(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = 'Uninstall_node_RPC'
-            description = 'Uninstall node from Uniconfig'
+            name: str = 'Uninstall_node_RPC'
+            description: str = 'Uninstall node from Uniconfig'
 
         class WorkerInput(TaskInput):
             node_id: str
