@@ -23,6 +23,19 @@ CONDUCTOR_HEADERS = MappingProxyType(
         'x-auth-user-groups': X_AUTH_USER_GROUP
     }
 )
+
+INVENTORY_HEADERS = MappingProxyType(
+    {
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Connection': 'keep-alive',
+        'DNT': '1',
+        'Keep-Alive': 'timeout=5',
+        'x-tenant-id': X_TENANT_ID,
+    }
+)
+
 ADDITIONAL_UNICONFIG_REQUEST_PARAMS = MappingProxyType(
     {
         'verify': False,
