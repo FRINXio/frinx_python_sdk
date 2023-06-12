@@ -5,8 +5,8 @@ from frinx.common.conductor_enums import WorkflowStatus
 from frinx.common.workflow import task
 from frinx.common.workflow.task import TaskType
 from frinx.common.workflow.task import WorkflowTaskImpl
-from tests.conftest import Inventory
-from tests.conftest import InventoryWorkflows
+from tests.conftest import MockWorker
+from tests.conftest import MockWorkflow
 
 
 class TestTaskGenerator:
@@ -184,12 +184,12 @@ class TestTaskGenerator:
         assert test_mock == test_task
 
     def test_dyn_fork_arrays_def_task(self) -> None:
-        task_inputs = InventoryWorkflows.InstallDeviceByName.WorkflowInput()
-
+        workflow_input = MockWorkflow.WorkflowInput()
+        
         fork_inputs: list[dict[object, str]] = [
-            {task_inputs.device_name.name: 'IOS01'},
-            {task_inputs.device_name.name: 'IOS02'},
-            {task_inputs.device_name.name: 'IOS02'},
+            {workflow_input.device_name.name: 'IOS01'},
+            {workflow_input.device_name.name: 'IOS02'},
+            {workflow_input.device_name.name: 'IOS02'},
         ]
 
         test_task = task.DynamicForkTask(
@@ -197,7 +197,7 @@ class TestTaskGenerator:
             name='dyn_fork',
             task_reference_name='dyn_fork',
             input_parameters=task.DynamicForkArraysTaskFromDefInputParameters(
-                fork_task_name=InventoryWorkflows.InstallDeviceByName,
+                fork_task_name=MockWorkflow,
                 fork_task_inputs=fork_inputs,
             ),
         ).dict(exclude_none=True)
@@ -211,7 +211,7 @@ class TestTaskGenerator:
             'async_complete': False,
             'default_case': [],
             'input_parameters': {
-                'fork_task_name': 'Install_device_by_name',
+                'fork_task_name': 'MockWorkflow',
                 'fork_task_inputs': [
                     {'device_name': 'IOS01'},
                     {'device_name': 'IOS02'},
@@ -225,16 +225,16 @@ class TestTaskGenerator:
         assert test_mock == test_task
 
     def test_dyn_fork_arrays_task(self) -> None:
-        task_inputs = InventoryWorkflows.InstallDeviceByName.WorkflowInput()
+        workflow_input = MockWorkflow.WorkflowInput()
 
         fork_inputs = [
-            {task_inputs.device_name.name: 'IOS01'},
-            {task_inputs.device_name.name: 'IOS02'},
-            {task_inputs.device_name.name: 'IOS02'},
+            {workflow_input.device_name.name: 'IOS01'},
+            {workflow_input.device_name.name: 'IOS02'},
+            {workflow_input.device_name.name: 'IOS02'},
         ]
 
         input_parameters = task.DynamicForkArraysTaskInputParameters(
-            fork_task_name='Install_device_by_name', fork_task_inputs=fork_inputs
+            fork_task_name='MockWorkflow', fork_task_inputs=fork_inputs
         )
 
         test_task = task.DynamicForkTask(
@@ -253,7 +253,7 @@ class TestTaskGenerator:
             'async_complete': False,
             'default_case': [],
             'input_parameters': {
-                'fork_task_name': 'Install_device_by_name',
+                'fork_task_name': 'MockWorkflow',
                 'fork_task_inputs': [
                     {'device_name': 'IOS01'},
                     {'device_name': 'IOS02'},
@@ -268,7 +268,7 @@ class TestTaskGenerator:
 
     def test_dyn_fork_def_task(self) -> None:
         input_parameters = task.DynamicForkTaskFromDefInputParameters(
-            dynamic_tasks=InventoryWorkflows.InstallDeviceByName,
+            dynamic_tasks=MockWorkflow,
             dynamic_tasks_input='${workflow.input.device_name}',
         )
 
@@ -288,7 +288,7 @@ class TestTaskGenerator:
             'async_complete': False,
             'default_case': [],
             'input_parameters': {
-                'dynamic_tasks': 'Install_device_by_name',
+                'dynamic_tasks': 'MockWorkflow',
                 'dynamic_tasks_input': '${workflow.input.device_name}',
             },
             'dynamic_fork_tasks_param': 'dynamicTasks',
@@ -382,7 +382,7 @@ class TestTaskGenerator:
         fork_tasks_a.append(
             task.SimpleTask(
                 type=TaskType.SIMPLE,
-                name=Inventory.InventoryAddDevice,
+                name=MockWorker,
                 task_reference_name='add_device_cli',
                 input_parameters=task.SimpleTaskInputParameters(
                     device_name='IOS01',
@@ -396,7 +396,7 @@ class TestTaskGenerator:
         fork_tasks_a.append(
             task.SimpleTask(
                 type=TaskType.SIMPLE,
-                name=Inventory.InventoryInstallDeviceByName,
+                name=MockWorker,
                 task_reference_name='install_device_cli',
                 input_parameters=task.SimpleTaskInputParameters(device_name='IOS01'),
             )
@@ -405,7 +405,7 @@ class TestTaskGenerator:
         fork_tasks_b.append(
             task.SimpleTask(
                 type=TaskType.SIMPLE,
-                name=Inventory.InventoryAddDevice,
+                name=MockWorker,
                 task_reference_name='add_device',
                 input_parameters=task.SimpleTaskInputParameters(
                     device_name='NTF01',
@@ -419,7 +419,7 @@ class TestTaskGenerator:
         fork_tasks_b.append(
             task.SimpleTask(
                 type=TaskType.SIMPLE,
-                name=Inventory.InventoryInstallDeviceByName,
+                name=MockWorker,
                 task_reference_name='install_device_netconf',
                 input_parameters=task.SimpleTaskInputParameters(device_name='NTF01'),
             )
@@ -444,7 +444,7 @@ class TestTaskGenerator:
             'fork_tasks': [
                 [
                     {
-                        'name': 'INVENTORY_add_device',
+                        'name': 'MockWorker',
                         'task_reference_name': 'add_device_cli',
                         'type': 'SIMPLE',
                         'start_delay': 0,
@@ -459,7 +459,7 @@ class TestTaskGenerator:
                         },
                     },
                     {
-                        'name': 'INVENTORY_install_device_by_name',
+                        'name': 'MockWorker',
                         'task_reference_name': 'install_device_cli',
                         'type': 'SIMPLE',
                         'start_delay': 0,
@@ -471,7 +471,7 @@ class TestTaskGenerator:
                 ],
                 [
                     {
-                        'name': 'INVENTORY_add_device',
+                        'name': 'MockWorker',
                         'task_reference_name': 'add_device',
                         'type': 'SIMPLE',
                         'start_delay': 0,
@@ -486,7 +486,7 @@ class TestTaskGenerator:
                         },
                     },
                     {
-                        'name': 'INVENTORY_install_device_by_name',
+                        'name': 'MockWorker',
                         'task_reference_name': 'install_device_netconf',
                         'type': 'SIMPLE',
                         'start_delay': 0,
@@ -653,7 +653,7 @@ class TestTaskGenerator:
     def test_simple_task(self) -> None:
         test_task = task.SimpleTask(
             type=TaskType.SIMPLE,
-            name=Inventory.InventoryAddDevice,
+            name=MockWorker,
             task_reference_name='test',
             input_parameters=task.SimpleTaskInputParameters(
                 device_name='IOS01',
@@ -664,7 +664,7 @@ class TestTaskGenerator:
         ).dict(exclude_none=True)
 
         test_mock = {
-            'name': 'INVENTORY_add_device',
+            'name': 'MockWorker',
             'task_reference_name': 'test',
             'type': 'SIMPLE',
             'start_delay': 0,
@@ -683,12 +683,12 @@ class TestTaskGenerator:
 
     def test_start_workflow_from_def_task(self) -> None:
         workflow_input_parameters: dict[str, object] = {
-            InventoryWorkflows.InstallDeviceByName.WorkflowInput().device_name.name: 'IOS01'
+            MockWorkflow.WorkflowInput().device_name.name: 'IOS01'
         }
 
         task_inputs = task.StartWorkflowTaskInputParameters(
             start_workflow=task.StartWorkflowTaskFromDefInputParameters(
-                workflow=InventoryWorkflows.InstallDeviceByName,
+                workflow=MockWorkflow,
                 input=workflow_input_parameters,
                 correlationId=None
             )
@@ -696,13 +696,13 @@ class TestTaskGenerator:
 
         test_task = task.StartWorkflowTask(
             type=TaskType.START_WORKFLOW,
-            name='Install_device_by_name',
+            name='MockWorkflow',
             task_reference_name='start',
             input_parameters=task_inputs,
         ).dict(exclude_none=True)
 
         test_mock = {
-            'name': 'Install_device_by_name',
+            'name': 'MockWorkflow',
             'task_reference_name': 'start',
             'type': 'START_WORKFLOW',
             'start_delay': 0,
@@ -711,7 +711,7 @@ class TestTaskGenerator:
             'default_case': [],
             'input_parameters': {
                 'start_workflow': {
-                    'name': 'Install_device_by_name',
+                    'name': 'MockWorkflow',
                     'version': 1,
                     'input': {'device_name': 'IOS01'},
                 }
@@ -722,12 +722,12 @@ class TestTaskGenerator:
 
     def test_start_workflow_plain_task(self) -> None:
         workflow_input_parameters: dict[str, object] = {
-            InventoryWorkflows.InstallDeviceByName.WorkflowInput().device_name.name: 'IOS01'
+            MockWorkflow.WorkflowInput().device_name.name: 'IOS01'
         }
 
         task_inputs = task.StartWorkflowTaskInputParameters(
             start_workflow=task.StartWorkflowTaskPlainInputParameters(
-                name='Install_device_by_name',
+                name='MockWorkflow',
                 version=1,
                 input=workflow_input_parameters,
                 correlationId=None
@@ -736,13 +736,13 @@ class TestTaskGenerator:
 
         test_task = task.StartWorkflowTask(
             type=TaskType.START_WORKFLOW,
-            name='Install_device_by_name',
+            name='MockWorkflow',
             task_reference_name='start',
             input_parameters=task_inputs,
         ).dict(exclude_none=True)
 
         test_mock = {
-            'name': 'Install_device_by_name',
+            'name': 'MockWorkflow',
             'task_reference_name': 'start',
             'type': 'START_WORKFLOW',
             'start_delay': 0,
@@ -751,7 +751,7 @@ class TestTaskGenerator:
             'default_case': [],
             'input_parameters': {
                 'start_workflow': {
-                    'name': 'Install_device_by_name',
+                    'name': 'MockWorkflow',
                     'version': 1,
                     'input': {'device_name': 'IOS01'},
                 }
@@ -762,14 +762,14 @@ class TestTaskGenerator:
 
     def test_sub_workflow_task(self) -> None:
         sub_workflow_param = task.SubWorkflowParam(
-            name=InventoryWorkflows.AddDeviceToInventory.__name__, version=1
+            name=MockWorkflow.__name__, version=1
         )
 
-        workflows_inputs = InventoryWorkflows.AddDeviceToInventory.WorkflowInput()
+        workflow_input = MockWorkflow.WorkflowInput()
 
         sub_workflow_input: dict[str, Any] = {}
-        sub_workflow_input.setdefault(workflows_inputs.device_name.name, 'IOS01')
-        sub_workflow_input.setdefault(workflows_inputs.zone.name, 'uniconfig')
+        sub_workflow_input.setdefault(workflow_input.device_name.name, 'IOS01')
+        sub_workflow_input.setdefault(workflow_input.zone.name, 'uniconfig')
 
         test_task = task.SubWorkflowTask(
             type=TaskType.SUB_WORKFLOW,
@@ -788,7 +788,7 @@ class TestTaskGenerator:
             'async_complete': False,
             'default_case': [],
             'input_parameters': {'device_name': 'IOS01', 'zone': 'uniconfig'},
-            'sub_workflow_param': {'name': 'AddDeviceToInventory', 'version': 1},
+            'sub_workflow_param': {'name': 'MockWorkflow', 'version': 1},
         }
 
         assert test_mock == test_task

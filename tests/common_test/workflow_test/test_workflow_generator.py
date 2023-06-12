@@ -5,7 +5,7 @@ from frinx.common.workflow.task import TaskType
 from frinx.common.workflow.workflow import FrontendWFInputFieldType
 from frinx.common.workflow.workflow import WorkflowImpl
 from frinx.common.workflow.workflow import WorkflowInputField
-from tests.conftest import Http as HttpWorker
+from tests.conftest import MockWorker
 
 
 class TestWorkflowGenerator:
@@ -78,7 +78,7 @@ class TestWorkflowGenerator:
                 self.tasks.append(
                     SimpleTask(
                         type=TaskType.SIMPLE,
-                        name=HttpWorker.HttpTask,
+                        name=MockWorker,
                         task_reference_name='http_task',
                         input_parameters=SimpleTaskInputParameters(
                             http_request=http_request
@@ -113,7 +113,7 @@ class TestWorkflowGenerator:
             ],
             'tasks': [
                 {
-                    'name': 'HTTP_task',
+                    'name': 'MockWorker',
                     'task_reference_name': 'http_task',
                     'type': 'SIMPLE',
                     'start_delay': 0,

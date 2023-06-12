@@ -40,26 +40,6 @@ class TestTaskGenerator:
                 def execute(self, task_def: Task) -> TaskResult:
                     return TaskResult(status=TaskResultStatus.COMPLETED)
 
-            class HttpTask2(WorkerImpl):
-                class WorkerDefinition(TaskDefinition):
-                    name = 'HTTP_task'
-                    description = 'Generic http task'
-                    labels = ['BASIC', 'HTTP']
-                    timeout_seconds = 360
-                    response_timeout_seconds = 360
-
-                class WorkerInput(TaskInput):
-                    http_request: str | dict[str, Any] | None
-
-                class WorkerOutput(TaskOutput):
-                    response: Any
-                    body: Any
-                    status_code: int = Field(..., alias='statusCode')
-                    cookies: dict[str, Any]
-
-                def execute(self, task_def: Task) -> TaskResult:
-                    return TaskResult(status=TaskResultStatus.COMPLETED)
-
         tasks = Http().tasks()
         test_task = []
         for task in tasks:
@@ -82,22 +62,7 @@ class TestTaskGenerator:
                 'rateLimitFrequencyInSeconds': 5,
                 'executionNameSpace': 'execution_namespace',
                 'ownerEmail': 'fm-base-workers',
-            },
-            {
-                'name': 'HTTP_task',
-                'description': '{"description": "Generic http task", "labels": ["BASIC", "HTTP"]}',
-                'retryCount': 0,
-                'timeoutSeconds': 360,
-                'inputKeys': ['http_request'],
-                'outputKeys': ['response', 'body', 'statusCode', 'cookies'],
-                'timeoutPolicy': 'ALERT_ONLY',
-                'retryLogic': 'FIXED',
-                'retryDelaySeconds': 0,
-                'responseTimeoutSeconds': 360,
-                'rateLimitPerFrequency': 0,
-                'rateLimitFrequencyInSeconds': 5,
-                'ownerEmail': 'fm-base-workers',
-            },
+            }
         ]
 
         assert test_mock == test_task
