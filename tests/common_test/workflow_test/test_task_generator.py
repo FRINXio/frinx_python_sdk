@@ -77,7 +77,7 @@ class TestTaskGenerator:
 
     def test_decision_case_value_task(self) -> None:
         test_task = task.DecisionCaseValueTask(
-            type = TaskType.DECISION,
+            type=TaskType.DECISION,
             name='decision',
             task_reference_name='decision',
             decision_cases={

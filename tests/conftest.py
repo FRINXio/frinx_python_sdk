@@ -20,7 +20,7 @@ class MockWorker(WorkerImpl):
 
     class WorkerOutput(TaskOutput): ...
 
-    def execute(self, task: Task) -> TaskResult:
+    def execute(self, worker_input: WorkerInput) -> TaskResult:
         return TaskResult(status=TaskResultStatus.COMPLETED)
 
 
@@ -35,4 +35,4 @@ class MockWorkflow(WorkflowImpl):
 
     class WorkflowOutput(WorkflowImpl.WorkflowOutput): ...
 
-    def workflow_builder(self, workflow_inputs: Any) -> None: ...
+    def workflow_builder(self, workflow_inputs: WorkflowInput) -> None: ...
