@@ -1,7 +1,4 @@
-from typing import Any
-
 from frinx.common.conductor_enums import TaskResultStatus
-from frinx.common.worker.task import Task
 from frinx.common.worker.task_def import TaskDefinition
 from frinx.common.worker.task_def import TaskInput
 from frinx.common.worker.task_def import TaskOutput
@@ -13,8 +10,8 @@ from frinx.common.workflow.workflow import WorkflowInputField
 
 class MockWorker(WorkerImpl):
     class WorkerDefinition(TaskDefinition):
-        name = 'MockWorker'
-        description = 'Helper class used in tests.'
+        name: str = 'MockWorker'
+        description: str = 'Helper class used in tests.'
 
     class WorkerInput(TaskInput): ...
 
@@ -25,13 +22,13 @@ class MockWorker(WorkerImpl):
 
 
 class MockWorkflow(WorkflowImpl):
-    name = 'MockWorkflow'
-    version = 1
-    description = 'Helper class used in tests.'
+    name: str = 'MockWorkflow'
+    version: int = 1
+    description: str = 'Helper class used in tests.'
     
     class WorkflowInput(WorkflowImpl.WorkflowInput):
-        device_name = WorkflowInputField(name='device_name')
-        zone = WorkflowInputField(name='zone')
+        device_name: WorkflowInputField = WorkflowInputField(name='device_name')
+        zone: WorkflowInputField = WorkflowInputField(name='zone')
 
     class WorkflowOutput(WorkflowImpl.WorkflowOutput): ...
 

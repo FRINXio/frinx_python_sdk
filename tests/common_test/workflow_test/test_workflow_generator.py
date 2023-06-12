@@ -11,30 +11,30 @@ from tests.conftest import MockWorker
 class TestWorkflowGenerator:
     def test_workflow_build(self) -> None:
         class HttpRequest(WorkflowImpl):
-            name = 'Http_request'
-            version = 1
-            description = 'Simple HTTP request'
-            labels = ['HTTP']
-            rbac = ['network-admin']
-            timeout_policy = TimeoutPolicy.TIME_OUT_WORKFLOW
-            restartable = True
+            name: str = 'Http_request'
+            version: int = 1
+            description: str = 'Simple HTTP request'
+            labels: list[object] = ['HTTP']
+            rbac: list[object] = ['network-admin']
+            timeout_policy: TimeoutPolicy = TimeoutPolicy.TIME_OUT_WORKFLOW
+            restartable: bool = True
 
             class WorkflowInput(WorkflowImpl.WorkflowInput):
-                uri = WorkflowInputField(
+                uri: WorkflowInputField = WorkflowInputField(
                     name='uri',
                     frontend_default_value='',
                     description='Request url',
                     type=FrontendWFInputFieldType.STRING,
                 )
 
-                content_type = WorkflowInputField(
+                content_type: WorkflowInputField = WorkflowInputField(
                     name='contentType',
                     frontend_default_value='application/json',
                     description='Request contentType header',
                     type=FrontendWFInputFieldType.STRING,
                 )
 
-                method = WorkflowInputField(
+                method: WorkflowInputField = WorkflowInputField(
                     name='method',
                     frontend_default_value='GET',
                     description='Request method',
@@ -42,21 +42,21 @@ class TestWorkflowGenerator:
                     type=FrontendWFInputFieldType.SELECT,
                 )
 
-                headers = WorkflowInputField(
+                headers: WorkflowInputField = WorkflowInputField(
                     name='headers',
                     frontend_default_value={},
                     description='Request headers',
                     type=FrontendWFInputFieldType.TEXTAREA,
                 )
 
-                body = WorkflowInputField(
+                body: WorkflowInputField = WorkflowInputField(
                     name='body',
                     frontend_default_value={},
                     description='Request body',
                     type=FrontendWFInputFieldType.TEXTAREA,
                 )
 
-                timeout = WorkflowInputField(
+                timeout: WorkflowInputField = WorkflowInputField(
                     name='timeout',
                     frontend_default_value=360,
                     description='Request timeout',

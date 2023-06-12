@@ -178,7 +178,7 @@ class TestTaskGenerator:
                     'input_parameters': {'duration': '1 seconds'},
                 }
             ],
-            'evaluator_type': 'DoWhileEvaluatorType.JAVASCRIPT',
+            'evaluator_type': 'javascript',
         }
 
         assert test_mock == test_task

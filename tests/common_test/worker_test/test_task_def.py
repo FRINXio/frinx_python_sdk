@@ -4,8 +4,7 @@ from pydantic import Field
 
 from frinx.common.conductor_enums import TaskResultStatus
 from frinx.common.frinx_rest import X_FROM
-from frinx.common.worker.service import ServiceWorkersImpl
-from frinx.common.worker.task import Task
+from frinx.common.type_aliases import ListAny
 from frinx.common.worker.task_def import DefaultTaskDefinition
 from frinx.common.worker.task_def import TaskDefinition
 from frinx.common.worker.task_def import TaskInput
@@ -18,14 +17,14 @@ class TestTaskGenerator:
     def test_create_task_def(self) -> None:
         class HttpTask(WorkerImpl):
             class WorkerDefinition(TaskDefinition):
-                name = 'HTTP_task'
-                description = 'Generic http task'
-                labels = ['BASIC', 'HTTP']
-                timeout_seconds = 360
-                response_timeout_seconds = 360
-                execution_name_space = 'execution_namespace'
-                retry_count = 10
-                concurrent_exec_limit = 5
+                name: str = 'HTTP_task'
+                description: str = 'Generic http task'
+                labels: ListAny = ['BASIC', 'HTTP']
+                timeout_seconds: int = 360
+                response_timeout_seconds: int = 360
+                execution_name_space: str = 'execution_namespace'
+                retry_count: int = 10
+                concurrent_exec_limit: int = 5
 
             class WorkerInput(TaskInput):
                 http_request: str | dict[str, Any] | None
@@ -43,7 +42,7 @@ class TestTaskGenerator:
             exclude_none=True
         )
         test_mock = {
-            'name': 'HTTP_task_1',
+            'name': 'HTTP_task',
             'description': '{"description": "Generic http task", "labels": ["BASIC", "HTTP"]}',
             'retry_count': 10,
             'timeout_seconds': 360,
@@ -65,11 +64,11 @@ class TestTaskGenerator:
     def test_create_task_def_with_custom_default(self) -> None:
         class HttpTask(WorkerImpl):
             class WorkerDefinition(TaskDefinition):
-                name = 'HTTP_task'
-                description = 'Generic http task'
-                labels = ['BASIC', 'HTTP']
-                timeout_seconds = 360
-                response_timeout_seconds = 360
+                name: str = 'HTTP_task'
+                description: str = 'Generic http task'
+                labels: ListAny = ['BASIC', 'HTTP']
+                timeout_seconds: int = 360
+                response_timeout_seconds: int = 360
 
             class WorkerInput(TaskInput):
                 http_request: str | dict[str, Any] | None
