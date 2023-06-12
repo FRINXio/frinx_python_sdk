@@ -27,7 +27,7 @@ class TestWorkflowGenerator:
                     type=FrontendWFInputFieldType.STRING,
                 )
 
-                contentType = WorkflowInputField(
+                content_type = WorkflowInputField(
                     name='contentType',
                     frontend_default_value='application/json',
                     description='Request contentType header',
@@ -69,7 +69,7 @@ class TestWorkflowGenerator:
             def workflow_builder(self, workflow_inputs: WorkflowInput) -> None:
                 http_request = {
                     'uri': workflow_inputs.uri.wf_input,
-                    'contentType': workflow_inputs.contentType.wf_input,
+                    'contentType': workflow_inputs.content_type.wf_input,
                     'method': workflow_inputs.method.wf_input,
                     'headers': workflow_inputs.headers.wf_input,
                     'body': workflow_inputs.body.wf_input,
