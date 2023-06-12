@@ -20,6 +20,8 @@ from frinx.common.workflow.service import ServiceWorkflowsImpl
 from frinx.common.workflow.task import DecisionCaseValueTask
 from frinx.common.workflow.task import DecisionCaseValueTaskInputParameters
 from frinx.common.workflow.task import SimpleTask
+from frinx.common.workflow.task import WorkflowTaskImpl
+from frinx.common.workflow.task import TaskType
 from frinx.common.workflow.task import SimpleTaskInputParameters
 from frinx.common.workflow.task import TerminateTask
 from frinx.common.workflow.task import TerminateTaskInputParameters
@@ -389,9 +391,10 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
             response_code: str
             response_body: dict[str, Any]
 
-        def workflow_builder(self, workflow_inputs: WorkflowInput) -> None:
+        def workflow_builder(self, workflow_inputs: WorkflowImpl.WorkflowInput) -> None:
             self.tasks.append(
                 SimpleTask(
+                    type=TaskType.SIMPLE,
                     name=Inventory.InventoryInstallDeviceByName,
                     task_reference_name="Install_device_by_name",
                     input_parameters=SimpleTaskInputParameters(
@@ -421,9 +424,10 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
             response_code: str
             response_body: dict[str, Any]
 
-        def workflow_builder(self, workflow_inputs: WorkflowInput) -> None:
+        def workflow_builder(self, workflow_inputs: WorkflowImpl.WorkflowInput) -> None:
             self.tasks.append(
                 SimpleTask(
+                    type=TaskType.SIMPLE,
                     name=Inventory.InventoryUninstallDeviceByName,
                     task_reference_name="Uninstall_device_by_name",
                     input_parameters=SimpleTaskInputParameters(
@@ -453,9 +457,10 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
             response_code: str
             response_body: dict[str, Any]
 
-        def workflow_builder(self, workflow_inputs: WorkflowInput) -> None:
+        def workflow_builder(self, workflow_inputs: WorkflowImpl.WorkflowInput) -> None:
             self.tasks.append(
                 SimpleTask(
+                    type=TaskType.SIMPLE,
                     name=Inventory.InventoryUninstallDeviceById,
                     task_reference_name="Install_device_by_id",
                     input_parameters=SimpleTaskInputParameters(
@@ -485,9 +490,10 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
             response_code: str
             response_body: dict[str, Any]
 
-        def workflow_builder(self, workflow_inputs: WorkflowInput) -> None:
+        def workflow_builder(self, workflow_inputs: WorkflowImpl.WorkflowInput) -> None:
             self.tasks.append(
                 SimpleTask(
+                    type=TaskType.SIMPLE,
                     name=Inventory.InventoryUninstallDeviceById,
                     task_reference_name="Uninstall_device_by_id",
                     input_parameters=SimpleTaskInputParameters(
@@ -577,8 +583,9 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
             response_code: str
             response_body: dict[str, Any]
 
-        def workflow_builder(self, workflow_inputs: WorkflowInput) -> None:
+        def workflow_builder(self, workflow_inputs: WorkflowImpl.WorkflowInput) -> None:
             add_device = SimpleTask(
+                type=TaskType.SIMPLE,
                 name=Inventory.InventoryAddDevice,
                 task_reference_name="Add_device_to_inventory",
                 input_parameters=SimpleTaskInputParameters(
@@ -593,19 +600,22 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
                 ),
             )
 
-            default_tasks = [
+            default_tasks: list[WorkflowTaskImpl] = [
                 TerminateTask(
+                    type=TaskType.TERMINATE,
                     name="skip_install",
                     task_reference_name="skip_install",
                     input_parameters=TerminateTaskInputParameters(
+                        termination_reason=None,
                         termination_status=WorkflowStatus.COMPLETED,
                         workflow_output={"a": "b"},
                     ),
                 )
             ]
 
-            true_tasks = [
+            true_tasks: list[WorkflowTaskImpl] = [
                 SimpleTask(
+                    type=TaskType.SIMPLE,
                     name=Inventory.InventoryInstallDeviceById,
                     task_reference_name="Add_device_to_inventory.output.response_body.add_device.device.id",
                     input_parameters=SimpleTaskInputParameters(
@@ -619,6 +629,7 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
             self.tasks.append(
                 (
                     DecisionCaseValueTask(
+                        type=TaskType.DECISION,
                         name="decisionTask",
                         task_reference_name="decisionTask",
                         case_value_param="install",
