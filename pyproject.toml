@@ -36,7 +36,6 @@ Homepage = 'https://github.com/FRINXio/frinx_python_sdk'
 Source = 'https://github.com/FRINXio/frinx_python_sdk'
 
 [tool.pytest.ini_options]
-pythonpath = "frinx"
 testpaths = 'tests'
 xfail_strict = true
 filterwarnings = ['error',
