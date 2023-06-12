@@ -2,6 +2,9 @@ from typing import Dict
 from typing import Any
 
 from frinx.common.workflow import task
+from frinx.common.workflow.task import TaskType
+from frinx.common.conductor_enums import WorkflowStatus
+from frinx.common.workflow.task import WorkflowTaskImpl
 from tests.conftest import Inventory
 from tests.conftest import InventoryWorkflows
 
@@ -9,17 +12,21 @@ from tests.conftest import InventoryWorkflows
 class TestTaskGenerator:
     def test_decision_task(self) -> None:
         test_task = task.DecisionTask(
+            type=TaskType.DECISION,
             name="decision",
             task_reference_name="decision",
             decision_cases={
-                "true": [task.HumanTask(name="human", task_reference_name="human")]
+                "true": [task.HumanTask(type=TaskType.HUMAN, name="human", task_reference_name="human")]
             },
             default_case=[
                 task.TerminateTask(
+                    type=TaskType.TERMINATE,
                     name="terminate",
                     task_reference_name="terminate",
                     input_parameters=task.TerminateTaskInputParameters(
-                        termination_status=task.WorkflowStatus.FAILED
+                        termination_status=WorkflowStatus.FAILED,
+                        termination_reason=None,
+                        workflow_output=None
                     ),
                 )
             ],
@@ -70,17 +77,21 @@ class TestTaskGenerator:
 
     def test_decision_case_value_task(self) -> None:
         test_task = task.DecisionCaseValueTask(
+            type = TaskType.DECISION,
             name="decision",
             task_reference_name="decision",
             decision_cases={
-                "true": [task.HumanTask(name="human", task_reference_name="human")]
+                "true": [task.HumanTask(type = TaskType.HUMAN, name="human", task_reference_name="human")]
             },
             default_case=[
                 task.TerminateTask(
+                    type=TaskType.TERMINATE,
                     name="terminate",
                     task_reference_name="terminate",
                     input_parameters=task.TerminateTaskInputParameters(
-                        termination_status=task.WorkflowStatus.FAILED
+                        termination_status=WorkflowStatus.FAILED,
+                        termination_reason=None,
+                        workflow_output=None
                     ),
                 )
             ],
@@ -130,12 +141,14 @@ class TestTaskGenerator:
 
     def test_do_while_task(self) -> None:
         loop_tasks = task.WaitDurationTask(
+            type=TaskType.WAIT,
             name="wait",
             task_reference_name="wait",
             input_parameters=task.WaitDurationTaskInputParameters(duration="1 seconds"),
         )
 
         test_task = task.DoWhileTask(
+            type=TaskType.DO_WHILE,
             name="do_while",
             task_reference_name="LoopTask",
             loop_condition="if ( $.LoopTask['iteration'] < $.value ) { true; } else { false; }",
@@ -180,6 +193,7 @@ class TestTaskGenerator:
         ]
 
         test_task = task.DynamicForkTask(
+            type=TaskType.FORK_JOIN_DYNAMIC,
             name="dyn_fork",
             task_reference_name="dyn_fork",
             input_parameters=task.DynamicForkArraysTaskFromDefInputParameters(
@@ -224,6 +238,7 @@ class TestTaskGenerator:
         )
 
         test_task = task.DynamicForkTask(
+            type=TaskType.FORK_JOIN_DYNAMIC,
             name="dyn_fork",
             task_reference_name="dyn_fork",
             input_parameters=input_parameters,
@@ -258,6 +273,7 @@ class TestTaskGenerator:
         )
 
         test_task = task.DynamicForkTask(
+            type=TaskType.FORK_JOIN_DYNAMIC,
             name="dyn_fork",
             task_reference_name="dyn_fork",
             input_parameters=input_parameters,
@@ -288,6 +304,7 @@ class TestTaskGenerator:
         )
 
         test_task = task.DynamicForkTask(
+            type=TaskType.FORK_JOIN_DYNAMIC,
             name="dyn_fork",
             task_reference_name="dyn_fork",
             input_parameters=input_parameters,
@@ -313,6 +330,7 @@ class TestTaskGenerator:
 
     def test_event_task(self) -> None:
         test_task = task.EventTask(
+            type=TaskType.EVENT,
             name="Event",
             task_reference_name="event_a",
             sink="conductor:Wait_task",
@@ -335,6 +353,7 @@ class TestTaskGenerator:
 
     def test_exclusive_join_task(self) -> None:
         test_task = task.ExclusiveJoinTask(
+            type=TaskType.EXCLUSIVE_JOIN,
             name="exclusive_join",
             task_reference_name="exclusive_join",
             join_on=["wf1", "wf2"],
@@ -357,11 +376,12 @@ class TestTaskGenerator:
         assert test_mock == test_task
 
     def test_fork_task(self) -> None:
-        fork_tasks_a = []
-        fork_tasks_b = []
+        fork_tasks_a: list[WorkflowTaskImpl] = []
+        fork_tasks_b: list[WorkflowTaskImpl] = []
 
         fork_tasks_a.append(
             task.SimpleTask(
+                type=TaskType.SIMPLE,
                 name=Inventory.InventoryAddDevice,
                 task_reference_name="add_device_cli",
                 input_parameters=task.SimpleTaskInputParameters(
@@ -375,6 +395,7 @@ class TestTaskGenerator:
 
         fork_tasks_a.append(
             task.SimpleTask(
+                type=TaskType.SIMPLE,
                 name=Inventory.InventoryInstallDeviceByName,
                 task_reference_name="install_device_cli",
                 input_parameters=task.SimpleTaskInputParameters(device_name="IOS01"),
@@ -383,6 +404,7 @@ class TestTaskGenerator:
 
         fork_tasks_b.append(
             task.SimpleTask(
+                type=TaskType.SIMPLE,
                 name=Inventory.InventoryAddDevice,
                 task_reference_name="add_device",
                 input_parameters=task.SimpleTaskInputParameters(
@@ -396,6 +418,7 @@ class TestTaskGenerator:
 
         fork_tasks_b.append(
             task.SimpleTask(
+                type=TaskType.SIMPLE,
                 name=Inventory.InventoryInstallDeviceByName,
                 task_reference_name="install_device_netconf",
                 input_parameters=task.SimpleTaskInputParameters(device_name="NTF01"),
@@ -403,6 +426,7 @@ class TestTaskGenerator:
         )
 
         test_task = task.ForkTask(
+            type=TaskType.FORK_JOIN,
             name="fork",
             task_reference_name="fork",
             fork_tasks=[fork_tasks_a, fork_tasks_b],
@@ -478,7 +502,7 @@ class TestTaskGenerator:
         assert test_mock == test_task
 
     def test_human_task(self) -> None:
-        test_task = task.HumanTask(name="human", task_reference_name="human").dict(
+        test_task = task.HumanTask(type=TaskType.HUMAN, name="human", task_reference_name="human").dict(
             exclude_none=True
         )
 
@@ -497,6 +521,7 @@ class TestTaskGenerator:
 
     def test_inline_task(self) -> None:
         test_task = task.InlineTask(
+            type=TaskType.INLINE,
             name="inline",
             task_reference_name="inline",
             input_parameters=task.InlineTaskInputParameters(
@@ -524,6 +549,7 @@ class TestTaskGenerator:
 
     def test_inline_func_task(self) -> None:
         test_task = task.InlineTask(
+            type=TaskType.INLINE,
             name="inline",
             task_reference_name="inline",
             input_parameters=task.InlineTaskInputParameters(
@@ -550,7 +576,7 @@ class TestTaskGenerator:
         assert test_mock == test_task
 
     def test_join_task(self) -> None:
-        test_task = task.JoinTask(name="join", task_reference_name="join").dict(
+        test_task = task.JoinTask(type=TaskType.JOIN, name="join", task_reference_name="join").dict(
             exclude_none=True
         )
 
@@ -570,6 +596,7 @@ class TestTaskGenerator:
 
     def test_json_jq_task(self) -> None:
         test_task = task.JsonJqTask(
+            type=TaskType.JSON_JQ_TRANSFORM,
             name="json_jq",
             task_reference_name="json_jq",
             input_parameters=task.JsonJqTaskInputParameters(
@@ -596,6 +623,7 @@ class TestTaskGenerator:
 
     def test_set_variable_task(self) -> None:
         test_task = task.SetVariableTask(
+            type=TaskType.SET_VARIABLE,
             name="var",
             task_reference_name="var",
             input_parameters=task.SetVariableTaskInputParameters(env="frinx"),
@@ -616,6 +644,7 @@ class TestTaskGenerator:
 
     def test_simple_task(self) -> None:
         test_task = task.SimpleTask(
+            type=TaskType.SIMPLE,
             name=Inventory.InventoryAddDevice,
             task_reference_name="test",
             input_parameters=task.SimpleTaskInputParameters(
@@ -653,10 +682,12 @@ class TestTaskGenerator:
             start_workflow=task.StartWorkflowTaskFromDefInputParameters(
                 workflow=InventoryWorkflows.InstallDeviceByName,
                 input=workflow_input_parameters,
+                correlationId=None
             )
         )
 
         test_task = task.StartWorkflowTask(
+            type=TaskType.START_WORKFLOW,
             name="Install_device_by_name",
             task_reference_name="start",
             input_parameters=task_inputs,
@@ -695,6 +726,7 @@ class TestTaskGenerator:
         )
 
         test_task = task.StartWorkflowTask(
+            type=TaskType.START_WORKFLOW,
             name="Install_device_by_name",
             task_reference_name="start",
             input_parameters=task_inputs,
@@ -731,6 +763,7 @@ class TestTaskGenerator:
         sub_workflow_input.setdefault(workflows_inputs.zone.name, "uniconfig")
 
         test_task = task.SubWorkflowTask(
+            type=TaskType.SUB_WORKFLOW,
             name="subworkflow",
             task_reference_name="subworkflow",
             sub_workflow_param=sub_workflow_param,
@@ -753,11 +786,13 @@ class TestTaskGenerator:
 
     def test_switch_value_param_task(self) -> None:
         test_task = task.SwitchTask(
+            type=TaskType.SWITCH,
             name="switch",
             task_reference_name="switch",
             decision_cases={
                 "true": [
                     task.WaitDurationTask(
+                        type=TaskType.WAIT,
                         name="wait",
                         task_reference_name="wait1",
                         input_parameters=task.WaitDurationTaskInputParameters(
@@ -768,6 +803,7 @@ class TestTaskGenerator:
             },
             default_case=[
                 task.WaitDurationTask(
+                    type=TaskType.WAIT,
                     name="wait",
                     task_reference_name="wait2",
                     input_parameters=task.WaitDurationTaskInputParameters(
@@ -824,11 +860,13 @@ class TestTaskGenerator:
 
     def test_switch_javascript_task(self) -> None:
         test_task = task.SwitchTask(
+            type=TaskType.SWITCH,
             name="switch",
             task_reference_name="switch",
             decision_cases={
                 "true": [
                     task.WaitDurationTask(
+                        type=TaskType.WAIT,
                         name="wait",
                         task_reference_name="wait1",
                         input_parameters=task.WaitDurationTaskInputParameters(
@@ -839,6 +877,7 @@ class TestTaskGenerator:
             },
             default_case=[
                 task.WaitDurationTask(
+                    type=TaskType.WAIT,
                     name="wait",
                     task_reference_name="wait2",
                     input_parameters=task.WaitDurationTaskInputParameters(
@@ -895,10 +934,11 @@ class TestTaskGenerator:
 
     def test_terminate_task(self) -> None:
         test_task = task.TerminateTask(
+            type=TaskType.TERMINATE,
             name="terminate",
             task_reference_name="terminate",
             input_parameters=task.TerminateTaskInputParameters(
-                termination_status=task.WorkflowStatus.COMPLETED,
+                termination_status=WorkflowStatus.COMPLETED,
                 workflow_output={"output": "COMPLETED"},
             ),
         ).dict(exclude_none=True)
@@ -921,6 +961,7 @@ class TestTaskGenerator:
 
     def test_wait_duration_task(self) -> None:
         test_task = task.WaitDurationTask(
+            type=TaskType.WAIT,
             name="WAIT",
             task_reference_name="WAIT",
             input_parameters=task.WaitDurationTaskInputParameters(
@@ -943,6 +984,7 @@ class TestTaskGenerator:
 
     def test_wait_until_task(self) -> None:
         test_task = task.WaitUntilTask(
+            type=TaskType.WAIT,
             name="WAIT_UNTIL",
             task_reference_name="WAIT_UNTIL",
             input_parameters=task.WaitUntilTaskInputParameters(

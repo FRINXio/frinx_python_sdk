@@ -1,5 +1,6 @@
 from frinx.common.conductor_enums import TimeoutPolicy
 from frinx.common.workflow.task import SimpleTask
+from frinx.common.workflow.task import TaskType
 from frinx.common.workflow.task import SimpleTaskInputParameters
 from frinx.common.workflow.workflow import FrontendWFInputFieldType
 from frinx.common.workflow.workflow import WorkflowImpl
@@ -76,6 +77,7 @@ class TestWorkflowGenerator:
 
                 self.tasks.append(
                     SimpleTask(
+                        type=TaskType.SIMPLE,
                         name=HttpWorker.HttpTask,
                         task_reference_name="http_task",
                         input_parameters=SimpleTaskInputParameters(
@@ -84,7 +86,11 @@ class TestWorkflowGenerator:
                     )
                 )
 
-        test_workflow = HttpRequest().dict(exclude_none=True)
+        test_workflow = HttpRequest(
+                name="Http_request",
+                version=1,
+                description="Simple HTTP request"
+            ).dict(exclude_none=True)
 
         test_mock = {
             "name": "Http_request",
