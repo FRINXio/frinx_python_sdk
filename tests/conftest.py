@@ -5,27 +5,27 @@ Use only in tests until new features are implemented to replace these code.
 
 from enum import Enum
 from typing import Any
-from typing import Optional
+
 from pydantic import Field
 
+from frinx.common.conductor_enums import TaskResultStatus
+from frinx.common.conductor_enums import WorkflowStatus
 from frinx.common.worker.service import ServiceWorkersImpl
 from frinx.common.worker.task import Task
 from frinx.common.worker.task_def import TaskDefinition
 from frinx.common.worker.task_def import TaskInput
 from frinx.common.worker.task_def import TaskOutput
 from frinx.common.worker.task_result import TaskResult
-from frinx.common.conductor_enums import TaskResultStatus
 from frinx.common.worker.worker import WorkerImpl
 from frinx.common.workflow.service import ServiceWorkflowsImpl
 from frinx.common.workflow.task import DecisionCaseValueTask
 from frinx.common.workflow.task import DecisionCaseValueTaskInputParameters
 from frinx.common.workflow.task import SimpleTask
-from frinx.common.workflow.task import WorkflowTaskImpl
-from frinx.common.workflow.task import TaskType
 from frinx.common.workflow.task import SimpleTaskInputParameters
+from frinx.common.workflow.task import TaskType
 from frinx.common.workflow.task import TerminateTask
 from frinx.common.workflow.task import TerminateTaskInputParameters
-from frinx.common.conductor_enums import WorkflowStatus
+from frinx.common.workflow.task import WorkflowTaskImpl
 from frinx.common.workflow.workflow import FrontendWFInputFieldType
 from frinx.common.workflow.workflow import WorkflowImpl
 from frinx.common.workflow.workflow import WorkflowInputField
@@ -36,19 +36,19 @@ class Http(ServiceWorkersImpl):
 
     class HttpTask(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "HTTP_task"
-            description = "Generic http task"
-            labels = ["BASIC", "HTTP"]
+            name = 'HTTP_task'
+            description = 'Generic http task'
+            labels = ['BASIC', 'HTTP']
             timeout_seconds = 360
             response_timeout_seconds = 360
 
         class WorkerInput(TaskInput):
-            http_request: Optional[str | dict[str, Any]]
+            http_request: str | dict[str, Any] | None
 
         class WorkerOutput(TaskOutput):
             response: Any
             body: Any
-            status_code: int = Field(..., alias="statusCode")
+            status_code: int = Field(..., alias='statusCode')
             cookies: dict[str, Any]
 
         def execute(self, task: Task) -> TaskResult:
@@ -60,9 +60,9 @@ class Inventory(ServiceWorkersImpl):
 
     class InventoryGetDevicesInfo(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_get_device_info"
-            description = "get a list of pages cursors from device inventory"
-            labels = ["BASIC", "INVENTORY"]
+            name = 'INVENTORY_get_device_info'
+            description = 'get a list of pages cursors from device inventory'
+            labels = ['BASIC', 'INVENTORY']
 
         class WorkerInput(TaskInput):
             device_name: str
@@ -78,14 +78,14 @@ class Inventory(ServiceWorkersImpl):
 
     class InventoryInstallDeviceById(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_install_device_by_id"
-            description = "Install device by device ID"
-            labels = ["BASIC", "INVENTORY"]
+            name = 'INVENTORY_install_device_by_id'
+            description = 'Install device by device ID'
+            labels = ['BASIC', 'INVENTORY']
             timeout_seconds = 3600
             response_timeout_seconds = 3600
 
         class WorkerInput(TaskInput):
-            device_id: Optional[str]
+            device_id: str | None
 
         class WorkerOutput(TaskOutput):
             url: str
@@ -99,14 +99,14 @@ class Inventory(ServiceWorkersImpl):
 
     class InventoryUninstallDeviceById(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_uninstall_device_by_id"
-            description = "Uninstall device by device ID"
-            labels = ["BASIC", "INVENTORY"]
+            name = 'INVENTORY_uninstall_device_by_id'
+            description = 'Uninstall device by device ID'
+            labels = ['BASIC', 'INVENTORY']
             timeout_seconds = 3600
             response_timeout_seconds = 3600
 
         class WorkerInput(TaskInput):
-            device_id: Optional[str]
+            device_id: str | None
 
         class WorkerOutput(TaskOutput):
             url: str
@@ -119,9 +119,9 @@ class Inventory(ServiceWorkersImpl):
     ###############################################################################
     class InventoryInstallDeviceByName(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_install_device_by_name"
-            description = "Install device by device name"
-            labels = ["BASIC", "INVENTORY"]
+            name = 'INVENTORY_install_device_by_name'
+            description = 'Install device by device name'
+            labels = ['BASIC', 'INVENTORY']
             timeout_seconds = 3600
             response_timeout_seconds = 3600
 
@@ -140,14 +140,14 @@ class Inventory(ServiceWorkersImpl):
 
     class InventoryUninstallDeviceByName(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_uninstall_device_by_name"
-            description = "Uninstall device by device name"
-            labels = ["BASIC", "INVENTORY"]
+            name = 'INVENTORY_uninstall_device_by_name'
+            description = 'Uninstall device by device name'
+            labels = ['BASIC', 'INVENTORY']
             timeout_seconds = 3600
             response_timeout_seconds = 3600
 
         class WorkerInput(TaskInput):
-            device_name: Optional[str]
+            device_name: str | None
 
         class WorkerOutput(TaskOutput):
             url: str
@@ -161,9 +161,9 @@ class Inventory(ServiceWorkersImpl):
 
     class InventoryGetLabels(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_get_labels"
-            description = "Get device labels"
-            labels = ["BASICS", "MAIN", "INVENTORY"]
+            name = 'INVENTORY_get_labels'
+            description = 'Get device labels'
+            labels = ['BASICS', 'MAIN', 'INVENTORY']
             timeout_seconds = 3600
             response_timeout_seconds = 3600
 
@@ -182,9 +182,9 @@ class Inventory(ServiceWorkersImpl):
 
     class InventoryCreateLabel(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_create_label"
-            description = "Create device labels"
-            labels = ["BASICS", "MAIN", "INVENTORY"]
+            name = 'INVENTORY_create_label'
+            description = 'Create device labels'
+            labels = ['BASICS', 'MAIN', 'INVENTORY']
             timeout_seconds = 3600
             response_timeout_seconds = 3600
 
@@ -203,9 +203,9 @@ class Inventory(ServiceWorkersImpl):
 
     class InventoryAddDevice(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_add_device"
-            description = "Add device to inventory database"
-            labels = ["BASICS", "MAIN", "INVENTORY"]
+            name = 'INVENTORY_add_device'
+            description = 'Add device to inventory database'
+            labels = ['BASICS', 'MAIN', 'INVENTORY']
             timeout_seconds = 3600
             response_timeout_seconds = 3600
 
@@ -214,10 +214,10 @@ class Inventory(ServiceWorkersImpl):
             zone: str
             service_state: str
             mount_body: str
-            vendor: Optional[str]
-            model: Optional[str]
-            device_size: Optional[str]
-            labels: Optional[str]
+            vendor: str | None
+            model: str | None
+            device_size: str | None
+            labels: str | None
 
         class WorkerOutput(TaskOutput):
             url: str
@@ -230,14 +230,14 @@ class Inventory(ServiceWorkersImpl):
     ###############################################################################
     class InventoryGetPagesCursors(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_get_pages_cursors"
-            description = "Get a list of pages cursors from device inventory"
-            labels = ["BASIC", "INVENTORY"]
+            name = 'INVENTORY_get_pages_cursors'
+            description = 'Get a list of pages cursors from device inventory'
+            labels = ['BASIC', 'INVENTORY']
             timeout_seconds = 3600
             response_timeout_seconds = 3600
 
         class WorkerInput(TaskInput):
-            labels: Optional[str]
+            labels: str | None
 
         class WorkerOutput(TaskOutput):
             labels: str
@@ -254,12 +254,12 @@ class Inventory(ServiceWorkersImpl):
 
     class InventoryGetAllDevicesAsDynamicForkTask(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_get_all_devices_as_dynamic_fork_tasks"
-            description = "Get all devices as dynamic fork task"
-            labels = ["BASIC", "INVENTORY"]
+            name = 'INVENTORY_get_all_devices_as_dynamic_fork_tasks'
+            description = 'Get all devices as dynamic fork task'
+            labels = ['BASIC', 'INVENTORY']
 
         class WorkerInput(TaskInput):
-            labels: Optional[str]
+            labels: str | None
             task: str
             task_params: dict[str, Any]
             optional: bool = False
@@ -275,16 +275,16 @@ class Inventory(ServiceWorkersImpl):
     ###############################################################################
     class InventoryGetPagesCursorsForkTasks(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_get_pages_cursors_fork_tasks"
-            description = "Get all pages cursors as dynamic fork tasks"
-            labels = ["BASIC", "INVENTORY"]
+            name = 'INVENTORY_get_pages_cursors_fork_tasks'
+            description = 'Get all pages cursors as dynamic fork tasks'
+            labels = ['BASIC', 'INVENTORY']
             timeout_seconds = 3600
             response_timeout_seconds = 3600
 
         class WorkerInput(TaskInput):
             task: str
             page_ids: str
-            labels: Optional[str]
+            labels: str | None
 
         class WorkerOutput(TaskOutput):
             url: str
@@ -298,16 +298,16 @@ class Inventory(ServiceWorkersImpl):
 
     class InventoryInstallInBatch(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_install_in_batch"
-            description = "Install devices in batch started from page cursor"
-            labels = ["BASIC", "INVENTORY"]
+            name = 'INVENTORY_install_in_batch'
+            description = 'Install devices in batch started from page cursor'
+            labels = ['BASIC', 'INVENTORY']
             timeout_seconds = 3600
             response_timeout_seconds = 3600
 
         class WorkerInput(TaskInput):
             page_size: str
             page_id: str
-            labels: Optional[str]
+            labels: str | None
 
         class WorkerOutput(TaskOutput):
             url: str
@@ -321,16 +321,16 @@ class Inventory(ServiceWorkersImpl):
 
     class InventoryUninstallInBatch(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
-            name = "INVENTORY_uninstall_in_batch"
-            description = "Uninstall devices in batch started from page cursor"
-            labels = ["BASIC", "INVENTORY"]
+            name = 'INVENTORY_uninstall_in_batch'
+            description = 'Uninstall devices in batch started from page cursor'
+            labels = ['BASIC', 'INVENTORY']
             timeout_seconds = 3600
             response_timeout_seconds = 3600
 
         class WorkerInput(TaskInput):
             page_size: int
             page_id: str
-            labels: Optional[str]
+            labels: str | None
 
         class WorkerOutput(TaskOutput):
             url: str
@@ -342,9 +342,9 @@ class Inventory(ServiceWorkersImpl):
 
 
 class ServiceState(str, Enum):
-    PLANNING = "PLANNING"
-    IN_SERVICE = "IN_SERVICE"
-    OUT_OF_SERVICE = "OUT_OF_SERVICE"
+    PLANNING = 'PLANNING'
+    IN_SERVICE = 'IN_SERVICE'
+    OUT_OF_SERVICE = 'OUT_OF_SERVICE'
 
     @classmethod
     def has_value(cls, value: str) -> bool:
@@ -356,9 +356,9 @@ class ServiceState(str, Enum):
 
 
 class DeviceSize(str, Enum):
-    SMALL = "SMALL"
-    MEDIUM = "MEDIUM"
-    LARGE = "LARGE"
+    SMALL = 'SMALL'
+    MEDIUM = 'MEDIUM'
+    LARGE = 'LARGE'
 
     @classmethod
     def has_value(cls, value: str) -> bool:
@@ -371,18 +371,18 @@ class DeviceSize(str, Enum):
 
 class InventoryWorkflows(ServiceWorkflowsImpl):
     class InstallDeviceByName(WorkflowImpl):
-        name = "Install_device_by_name"
+        name = 'Install_device_by_name'
         version = 1
-        description = "Install device from device inventory by device name"
+        description = 'Install device from device inventory by device name'
         restartable = False
         schema_version = 2
-        labels = ["BASICS", "INVENTORY"]
+        labels = ['BASICS', 'INVENTORY']
 
         class WorkflowInput(WorkflowImpl.WorkflowInput):
             device_name = WorkflowInputField(
-                name="device_name",
-                frontend_default_value="IOS01",
-                description="Device name from Device Inventory",
+                name='device_name',
+                frontend_default_value='IOS01',
+                description='Device name from Device Inventory',
                 type=FrontendWFInputFieldType.STRING,
             )
 
@@ -396,26 +396,26 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
                 SimpleTask(
                     type=TaskType.SIMPLE,
                     name=Inventory.InventoryInstallDeviceByName,
-                    task_reference_name="Install_device_by_name",
+                    task_reference_name='Install_device_by_name',
                     input_parameters=SimpleTaskInputParameters(
-                        device_name="${workflow.input.device_name}"
+                        device_name='${workflow.input.device_name}'
                     ),
                 )
             )
 
     class UninstallDeviceByName(WorkflowImpl):
-        name = "Uninstall_device_by_name"
+        name = 'Uninstall_device_by_name'
         version = 1
-        description = "Uninstall device from device inventory by device name"
+        description = 'Uninstall device from device inventory by device name'
         restartable = False
         schema_version = 2
-        labels = ["BASICS", "INVENTORY"]
+        labels = ['BASICS', 'INVENTORY']
 
         class WorkflowInput(WorkflowImpl.WorkflowInput):
             device_name = WorkflowInputField(
-                name="device_name",
-                frontend_default_value="IOS01",
-                description="Device name from Device Inventory",
+                name='device_name',
+                frontend_default_value='IOS01',
+                description='Device name from Device Inventory',
                 type=FrontendWFInputFieldType.STRING,
             )
 
@@ -429,26 +429,26 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
                 SimpleTask(
                     type=TaskType.SIMPLE,
                     name=Inventory.InventoryUninstallDeviceByName,
-                    task_reference_name="Uninstall_device_by_name",
+                    task_reference_name='Uninstall_device_by_name',
                     input_parameters=SimpleTaskInputParameters(
-                        device_name="${workflow.input.device_name}"
+                        device_name='${workflow.input.device_name}'
                     ),
                 )
             )
 
     class InstallDeviceById(WorkflowImpl):
-        name = "Install_device_by_id"
+        name = 'Install_device_by_id'
         version = 1
-        description = "Install device from device inventory by device id"
+        description = 'Install device from device inventory by device id'
         restartable = False
         schema_version = 2
-        labels = ["BASICS", "INVENTORY"]
+        labels = ['BASICS', 'INVENTORY']
 
         class WorkflowInput(WorkflowImpl.WorkflowInput):
             device_id = WorkflowInputField(
-                name="device_id",
-                frontend_default_value="IOS01",
-                description="Device name from Device Inventory",
+                name='device_id',
+                frontend_default_value='IOS01',
+                description='Device name from Device Inventory',
                 type=FrontendWFInputFieldType.STRING,
             )
 
@@ -462,26 +462,26 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
                 SimpleTask(
                     type=TaskType.SIMPLE,
                     name=Inventory.InventoryUninstallDeviceById,
-                    task_reference_name="Install_device_by_id",
+                    task_reference_name='Install_device_by_id',
                     input_parameters=SimpleTaskInputParameters(
-                        device_id="${workflow.input.device_id}"
+                        device_id='${workflow.input.device_id}'
                     ),
                 )
             )
 
     class UninstallDeviceById(WorkflowImpl):
-        name = "Uninstall_device_by_id"
+        name = 'Uninstall_device_by_id'
         version = 1
-        description = "Uninstall device from device inventory by device id"
+        description = 'Uninstall device from device inventory by device id'
         restartable = False
         schema_version = 2
-        labels = ["BASICS", "INVENTORY"]
+        labels = ['BASICS', 'INVENTORY']
 
         class WorkflowInput(WorkflowImpl.WorkflowInput):
             device_id = WorkflowInputField(
-                name="device_id",
-                frontend_default_value="IOS01",
-                description="Device name from Device Inventory",
+                name='device_id',
+                frontend_default_value='IOS01',
+                description='Device name from Device Inventory',
                 type=FrontendWFInputFieldType.STRING,
             )
 
@@ -495,86 +495,86 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
                 SimpleTask(
                     type=TaskType.SIMPLE,
                     name=Inventory.InventoryUninstallDeviceById,
-                    task_reference_name="Uninstall_device_by_id",
+                    task_reference_name='Uninstall_device_by_id',
                     input_parameters=SimpleTaskInputParameters(
-                        device_id="${workflow.input.device_id}"
+                        device_id='${workflow.input.device_id}'
                     ),
                 )
             )
 
     class AddDeviceToInventory(WorkflowImpl):
-        name = "Add_device_to_inventory"
+        name = 'Add_device_to_inventory'
         version = 1
-        description = "Add device to inventory"
+        description = 'Add device to inventory'
         restartable = True
         schema_version = 2
-        labels = ["BASICS", "INVENTORY"]
+        labels = ['BASICS', 'INVENTORY']
         update_time = 2
         workflow_status_listener_enabled = True
 
         class WorkflowInput(WorkflowImpl.WorkflowInput):
             device_name = WorkflowInputField(
-                name="device_name",
-                frontend_default_value="IOS01",
-                description="Device name",
+                name='device_name',
+                frontend_default_value='IOS01',
+                description='Device name',
                 type=FrontendWFInputFieldType.STRING,
             )
 
             zone = WorkflowInputField(
-                name="zone",
-                frontend_default_value="uniconfig",
-                description="Deployment zone",
+                name='zone',
+                frontend_default_value='uniconfig',
+                description='Deployment zone',
                 type=FrontendWFInputFieldType.STRING,
             )
 
             service_state = WorkflowInputField(
-                name="service_state",
+                name='service_state',
                 frontend_default_value=ServiceState.IN_SERVICE,
-                description="Device service state",
+                description='Device service state',
                 type=FrontendWFInputFieldType.SELECT,
                 options=ServiceState.list(),
             )
 
             mount_body = WorkflowInputField(
-                name="mount_body",
+                name='mount_body',
                 frontend_default_value=None,
-                description="Device mount body",
+                description='Device mount body',
                 type=FrontendWFInputFieldType.TEXTAREA,
             )
 
             vendor = WorkflowInputField(
-                name="vendor",
+                name='vendor',
                 frontend_default_value=None,
-                description="Device vendor",
+                description='Device vendor',
                 type=FrontendWFInputFieldType.STRING,
             )
 
             model = WorkflowInputField(
-                name="model",
+                name='model',
                 frontend_default_value=None,
-                description="Device model",
+                description='Device model',
                 type=FrontendWFInputFieldType.STRING,
             )
 
             device_size = WorkflowInputField(
-                name="device_size",
+                name='device_size',
                 frontend_default_value=DeviceSize.MEDIUM,
-                description="Device size",
+                description='Device size',
                 type=FrontendWFInputFieldType.SELECT,
                 options=DeviceSize.list(),
             )
 
             labels = WorkflowInputField(
-                name="labels",
+                name='labels',
                 frontend_default_value=None,
-                description="Device status",
+                description='Device status',
                 type=FrontendWFInputFieldType.STRING,
             )
 
             install = WorkflowInputField(
-                name="install",
+                name='install',
                 frontend_default_value=False,
-                description="Install device",
+                description='Install device',
                 type=FrontendWFInputFieldType.TOGGLE,
             )
 
@@ -587,28 +587,28 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
             add_device = SimpleTask(
                 type=TaskType.SIMPLE,
                 name=Inventory.InventoryAddDevice,
-                task_reference_name="Add_device_to_inventory",
+                task_reference_name='Add_device_to_inventory',
                 input_parameters=SimpleTaskInputParameters(
-                    device_name="${workflow.input.device_name}",
-                    zone="${workflow.input.zone}",
-                    service_state="${workflow.input.service_state}",
-                    mount_body="${workflow.input.mount_body}",
-                    vendor="${workflow.input.vendor}",
-                    model="${workflow.input.model}",
-                    device_size="${workflow.input.device_size}",
-                    labels="${workflow.input.labels}",
+                    device_name='${workflow.input.device_name}',
+                    zone='${workflow.input.zone}',
+                    service_state='${workflow.input.service_state}',
+                    mount_body='${workflow.input.mount_body}',
+                    vendor='${workflow.input.vendor}',
+                    model='${workflow.input.model}',
+                    device_size='${workflow.input.device_size}',
+                    labels='${workflow.input.labels}',
                 ),
             )
 
             default_tasks: list[WorkflowTaskImpl] = [
                 TerminateTask(
                     type=TaskType.TERMINATE,
-                    name="skip_install",
-                    task_reference_name="skip_install",
+                    name='skip_install',
+                    task_reference_name='skip_install',
                     input_parameters=TerminateTaskInputParameters(
                         termination_reason=None,
                         termination_status=WorkflowStatus.COMPLETED,
-                        workflow_output={"a": "b"},
+                        workflow_output={'a': 'b'},
                     ),
                 )
             ]
@@ -617,9 +617,9 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
                 SimpleTask(
                     type=TaskType.SIMPLE,
                     name=Inventory.InventoryInstallDeviceById,
-                    task_reference_name="Add_device_to_inventory.output.response_body.add_device.device.id",
+                    task_reference_name='Add_device_to_inventory.output.response_body.add_device.device.id',
                     input_parameters=SimpleTaskInputParameters(
-                        device_id="${Add_device_to_inventory.output.response_body.addDevice.device.id}"
+                        device_id='${Add_device_to_inventory.output.response_body.addDevice.device.id}'
                     ),
                 )
             ]
@@ -627,17 +627,17 @@ class InventoryWorkflows(ServiceWorkflowsImpl):
             self.tasks.append(add_device)
 
             self.tasks.append(
-                (
+                
                     DecisionCaseValueTask(
                         type=TaskType.DECISION,
-                        name="decisionTask",
-                        task_reference_name="decisionTask",
-                        case_value_param="install",
-                        decision_cases={"true": true_tasks},
+                        name='decisionTask',
+                        task_reference_name='decisionTask',
+                        case_value_param='install',
+                        decision_cases={'true': true_tasks},
                         default_case=default_tasks,
                         input_parameters=DecisionCaseValueTaskInputParameters(
-                            case_value_param="${workflow.input.install}"
+                            case_value_param='${workflow.input.install}'
                         ),
                     )
-                )
+                
             )
