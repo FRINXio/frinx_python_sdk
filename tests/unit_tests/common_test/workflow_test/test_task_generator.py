@@ -5,8 +5,8 @@ from frinx.common.conductor_enums import WorkflowStatus
 from frinx.common.workflow import task
 from frinx.common.workflow.task import TaskType
 from frinx.common.workflow.task import WorkflowTaskImpl
-from tests.conftest import MockWorker
-from tests.conftest import MockWorkflow
+from tests.unit_tests.conftest import MockWorker
+from tests.unit_tests.conftest import MockWorkflow
 
 
 class TestTaskGenerator:

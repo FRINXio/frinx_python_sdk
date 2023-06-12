@@ -5,7 +5,7 @@ from frinx.common.workflow.task import TaskType
 from frinx.common.workflow.workflow import FrontendWFInputFieldType
 from frinx.common.workflow.workflow import WorkflowImpl
 from frinx.common.workflow.workflow import WorkflowInputField
-from tests.conftest import MockWorker
+from tests.unit_tests.conftest import MockWorker
 
 
 class TestWorkflowGenerator:
