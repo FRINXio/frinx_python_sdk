@@ -4,6 +4,7 @@ from typing import Any
 from frinx.common.workflow import task
 from frinx.common.workflow.task import TaskType
 from frinx.common.conductor_enums import WorkflowStatus
+from frinx.common.conductor_enums import SwitchEvaluatorType
 from frinx.common.workflow.task import WorkflowTaskImpl
 from tests.conftest import Inventory
 from tests.conftest import InventoryWorkflows
@@ -186,7 +187,7 @@ class TestTaskGenerator:
     def test_dyn_fork_arrays_def_task(self) -> None:
         task_inputs = InventoryWorkflows.InstallDeviceByName.WorkflowInput()
 
-        fork_inputs = [
+        fork_inputs: list[Dict[object, str]] = [
             {task_inputs.device_name.name: "IOS01"},
             {task_inputs.device_name.name: "IOS02"},
             {task_inputs.device_name.name: "IOS02"},
@@ -674,7 +675,7 @@ class TestTaskGenerator:
         assert test_mock == test_task
 
     def test_start_workflow_from_def_task(self) -> None:
-        workflow_input_parameters = {
+        workflow_input_parameters: dict[str, object] = {
             InventoryWorkflows.InstallDeviceByName.WorkflowInput().device_name.name: "IOS01"
         }
 
@@ -713,7 +714,7 @@ class TestTaskGenerator:
         assert test_mock == test_task
 
     def test_start_workflow_plain_task(self) -> None:
-        workflow_input_parameters = {
+        workflow_input_parameters: dict[str, object] = {
             InventoryWorkflows.InstallDeviceByName.WorkflowInput().device_name.name: "IOS01"
         }
 
@@ -722,6 +723,7 @@ class TestTaskGenerator:
                 name="Install_device_by_name",
                 version=1,
                 input=workflow_input_parameters,
+                correlationId=None
             )
         )
 
@@ -812,7 +814,7 @@ class TestTaskGenerator:
                 )
             ],
             expression="switch_case_value",
-            evaluator_type=task.SwitchEvaluatorType.VALUE_PARAM,
+            evaluator_type=SwitchEvaluatorType.VALUE_PARAM,
             input_parameters=task.SwitchTaskValueParamInputParameters(
                 switch_case_value="${workflow.input.value}"
             ),
@@ -886,7 +888,7 @@ class TestTaskGenerator:
                 )
             ],
             expression="$.inputValue == 'true' ? 'true' : 'false'",
-            evaluator_type=task.SwitchEvaluatorType.JAVASCRIPT,
+            evaluator_type=SwitchEvaluatorType.JAVASCRIPT,
             input_parameters=task.SwitchTaskInputParameters(
                 input_value="${workflow.input.value}"
             ),
@@ -939,6 +941,7 @@ class TestTaskGenerator:
             task_reference_name="terminate",
             input_parameters=task.TerminateTaskInputParameters(
                 termination_status=WorkflowStatus.COMPLETED,
+                termination_reason=None,
                 workflow_output={"output": "COMPLETED"},
             ),
         ).dict(exclude_none=True)
