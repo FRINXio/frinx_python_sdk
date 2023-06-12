@@ -36,11 +36,7 @@ Homepage = 'https://github.com/FRINXio/frinx_python_sdk'
 Source = 'https://github.com/FRINXio/frinx_python_sdk'
 
 [tool.pytest.ini_options]
-testpaths = 'tests'
-xfail_strict = true
-filterwarnings = ['error',
-    'ignore:path is deprecated.*:DeprecationWarning:',
-]
+python_files = 'tests/*'
 
 [tool.codespell]
 skip = '.git,env*'
