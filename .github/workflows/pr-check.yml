@@ -48,3 +48,6 @@ jobs:
       - name: Run pyright
         run: |
           poetry run pyright .
+      - name: Run unit tests
+        run: |
+          poetry run pytest tests/unit_tests/ -vv
