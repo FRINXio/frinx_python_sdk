@@ -1,5 +1,6 @@
 
 from frinx.common.conductor_enums import TaskResultStatus
+from frinx.common.frinx_rest import UNICONFIG_URL_BASE
 from frinx.common.type_aliases import DictAny
 from frinx.common.worker.service import ServiceWorkersImpl
 from frinx.common.worker.task_def import TaskDefinition
@@ -23,7 +24,7 @@ class SnapshotManager(ServiceWorkersImpl):
             snapshot_name: str
             transaction_id: str
             uniconfig_server_id: str | None = None
-            uniconfig_url_base: str | None = None
+            uniconfig_url_base: str = UNICONFIG_URL_BASE
 
         class WorkerOutput(TaskOutput):
             output: DictAny
@@ -47,7 +48,7 @@ class SnapshotManager(ServiceWorkersImpl):
             snapshot_name: str
             transaction_id: str
             uniconfig_server_id: str | None = None
-            uniconfig_url_base: str | None = None
+            uniconfig_url_base: str = UNICONFIG_URL_BASE
 
         class WorkerOutput(TaskOutput):
             output: DictAny
@@ -71,7 +72,7 @@ class SnapshotManager(ServiceWorkersImpl):
             node_ids: list[str]
             transaction_id: str
             uniconfig_server_id: str | None = None
-            uniconfig_url_base: str | None = None
+            uniconfig_url_base: str = UNICONFIG_URL_BASE
 
         class WorkerOutput(TaskOutput):
             output: DictAny

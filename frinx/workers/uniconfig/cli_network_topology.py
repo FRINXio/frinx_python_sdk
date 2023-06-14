@@ -1,6 +1,7 @@
 from typing import Any
 
 from frinx.common.conductor_enums import TaskResultStatus
+from frinx.common.frinx_rest import UNICONFIG_URL_BASE
 from frinx.common.type_aliases import ListAny
 from frinx.common.worker.service import ServiceWorkersImpl
 from frinx.common.worker.task_def import TaskDefinition
@@ -24,7 +25,7 @@ class CliNetworkTopology(ServiceWorkersImpl):
             transaction_id: str
             uniconfig_server_id: str | None = None
             wait_for_output: int = 0
-            uniconfig_url_base: str | None = None
+            uniconfig_url_base: str = UNICONFIG_URL_BASE
 
         class WorkerOutput(TaskOutput):
             output: dict[str, Any]
@@ -51,7 +52,7 @@ class CliNetworkTopology(ServiceWorkersImpl):
             command: str
             transaction_id: str
             uniconfig_server_id: str | None = None
-            uniconfig_url_base: str | None = None
+            uniconfig_url_base: str = UNICONFIG_URL_BASE
 
         class WorkerOutput(TaskOutput):
             output: dict[str, Any]
