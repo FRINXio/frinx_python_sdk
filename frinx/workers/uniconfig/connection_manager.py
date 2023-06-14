@@ -1,6 +1,7 @@
 from typing import Literal
 
 from frinx.common.conductor_enums import TaskResultStatus
+from frinx.common.frinx_rest import UNICONFIG_URL_BASE
 from frinx.common.type_aliases import DictAny
 from frinx.common.worker.service import ServiceWorkersImpl
 from frinx.common.worker.task_def import TaskDefinition
@@ -22,7 +23,7 @@ class ConnectionManager(ServiceWorkersImpl):
             node_id: str
             connection_type: Literal['netconf', 'cli']
             install_params: DictAny
-            uniconfig_url_base: str | None = None
+            uniconfig_url_base: str = UNICONFIG_URL_BASE
 
         class WorkerOutput(TaskOutput):
             output: DictAny
@@ -44,7 +45,7 @@ class ConnectionManager(ServiceWorkersImpl):
         class WorkerInput(TaskInput):
             node_id: str
             connection_type: Literal['netconf', 'cli']
-            uniconfig_url_base: str | None = None
+            uniconfig_url_base: str = UNICONFIG_URL_BASE
 
         class WorkerOutput(TaskOutput):
             output: DictAny

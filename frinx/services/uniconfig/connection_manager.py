@@ -15,7 +15,7 @@ def install_node(
     node_id: str,
     connection_type: Literal['netconf', 'cli'],
     install_params: DictAny,
-    uniconfig_url_base: str | None = None
+    uniconfig_url_base: str = UNICONFIG_URL_BASE
 ) -> requests.Response:
     """
     Install node to Uniconfig.
@@ -24,16 +24,12 @@ def install_node(
         node_id: Unique identifier, which will be assigned to a node after installation.
         connection_type: Connection type. Accepted values are "netconf" and "cli" values.
         install_params: Installation parameters. For more info check the Uniconfig install documentation.
-        uniconfig_url_base: Override default Uniconfig url.
+        uniconfig_url_base: Uniconfig url.
 
     Returns:
         Http response.
     """
-    base_url = UNICONFIG_URL_BASE
-    if uniconfig_url_base is not None:
-        base_url = uniconfig_url_base
-
-    url = normalize_base_url(base_url) + INSTALL_NODE_URL
+    url = normalize_base_url(uniconfig_url_base) + INSTALL_NODE_URL
     data: DictAny = {
         'input': {
             'node-id': node_id,
@@ -51,7 +47,7 @@ def install_node(
 def uninstall_node(
     node_id: str,
     connection_type: Literal['netconf', 'cli'],
-    uniconfig_url_base: str | None = None
+    uniconfig_url_base: str = UNICONFIG_URL_BASE
 ) -> requests.Response:
     """
     Uninstall node from Uniconfig.
@@ -59,16 +55,12 @@ def uninstall_node(
     Args:
         node_id: Unique identifier of a node to be uninstalled.
         connection_type: Connection type. Accepted values are "netconf" and "cli" values.
-        uniconfig_url_base: Override default Uniconfig url.
+        uniconfig_url_base: Uniconfig url.
 
     Returns:
         Http response.
     """
-    base_url = UNICONFIG_URL_BASE
-    if uniconfig_url_base is not None:
-        base_url = uniconfig_url_base
-
-    url = normalize_base_url(base_url) + UNINSTALL_NODE_URL
+    url = normalize_base_url(uniconfig_url_base) + UNINSTALL_NODE_URL
     data = {
         'input': {
             'node-id': node_id,

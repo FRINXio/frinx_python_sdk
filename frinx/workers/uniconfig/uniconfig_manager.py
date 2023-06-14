@@ -1,5 +1,6 @@
 
 from frinx.common.conductor_enums import TaskResultStatus
+from frinx.common.frinx_rest import UNICONFIG_URL_BASE
 from frinx.common.type_aliases import DictAny
 from frinx.common.worker.service import ServiceWorkersImpl
 from frinx.common.worker.task_def import TaskDefinition
@@ -23,7 +24,7 @@ class UniconfigManager(ServiceWorkersImpl):
         class WorkerInput(TaskInput):
             transaction_timeout: int | None = None
             use_dedicated_session: bool = False
-            uniconfig_url_base: str | None = None
+            uniconfig_url_base: str = UNICONFIG_URL_BASE
 
         class WorkerOutput(TaskOutput):
             transaction_id: str
@@ -50,7 +51,7 @@ class UniconfigManager(ServiceWorkersImpl):
 
         class WorkerInput(TaskInput):
             transaction_id: str
-            uniconfig_url_base: str | None = None
+            uniconfig_url_base: str = UNICONFIG_URL_BASE
 
         def execute(self, worker_input: WorkerInput) -> TaskResult:
             close_transaction(transaction_id=worker_input.transaction_id)
@@ -66,7 +67,7 @@ class UniconfigManager(ServiceWorkersImpl):
             confirmed_commit: bool = False
             validate_commit: bool = True
             uniconfig_server_id: str | None = None
-            uniconfig_url_base: str | None = None
+            uniconfig_url_base: str = UNICONFIG_URL_BASE
 
         class WorkerOutput(TaskOutput):
             output: DictAny
@@ -91,7 +92,7 @@ class UniconfigManager(ServiceWorkersImpl):
             node_ids: list[str]
             transaction_id: str
             uniconfig_server_id: str | None = None
-            uniconfig_url_base: str | None = None
+            uniconfig_url_base: str = UNICONFIG_URL_BASE
 
         class WorkerOutput(TaskOutput):
             output: DictAny
@@ -114,7 +115,7 @@ class UniconfigManager(ServiceWorkersImpl):
             node_ids: list[str]
             transaction_id: str
             uniconfig_server_id: str | None = None
-            uniconfig_url_base: str | None = None
+            uniconfig_url_base: str = UNICONFIG_URL_BASE
 
         class WorkerOutput(TaskOutput):
             output: DictAny
