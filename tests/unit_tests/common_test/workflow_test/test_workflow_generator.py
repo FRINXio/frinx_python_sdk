@@ -14,8 +14,8 @@ class TestWorkflowGenerator:
             name: str = 'Http_request'
             version: int = 1
             description: str = 'Simple HTTP request'
-            labels: list[object] = ['HTTP']
-            rbac: list[object] = ['network-admin']
+            labels: list[str] = ['HTTP']
+            rbac: list[str] = ['network-admin']
             timeout_policy: TimeoutPolicy = TimeoutPolicy.TIME_OUT_WORKFLOW
             restartable: bool = True
 
