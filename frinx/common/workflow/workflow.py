@@ -91,8 +91,8 @@ class WorkflowImpl(BaseModel, ABC):
 
     # LABELS, RBAC, DESCRIPTION, INPUT VALUES
     description: str
-    labels: list[object] | None = Field(default=None)  # TODO why list[str] return error
-    rbac: list[object] | None = Field(default=None)  # TODO why list[str] return error
+    labels: list[str] | None = Field(default=None)
+    rbac: list[str] | None = Field(default=None)
 
     # PREDEFINED
     restartable: bool = Field(default=False)
@@ -139,7 +139,7 @@ class WorkflowImpl(BaseModel, ABC):
         return workflow_inputs
 
     def description_builder(self) -> None:
-        self.description = jsonify_description(self.description, self.labels, self.rbac)   # type: ignore
+        self.description = jsonify_description(self.description, self.labels, self.rbac)
 
     @classmethod
     def register(cls, overwrite: bool = False) -> None:
