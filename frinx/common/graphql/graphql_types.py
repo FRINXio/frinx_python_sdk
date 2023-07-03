@@ -273,7 +273,7 @@ class Query(BaseModel):
         match any_object:
             case list():
                 for item in any_object:
-                    pairs.append(self.dict_to_custom_string(item))
+                    pairs.append(self.dict_to_custom_input(item))
             case dict():
                 for key, value in any_object.items():
                     match value:
@@ -282,10 +282,10 @@ class Query(BaseModel):
                         case bool() | int() | float():
                             pairs.append(f'{key}: {value}')
                         case dict():
-                            pairs.append(f'{key}: {self.dict_to_custom_string(value)}')
+                            pairs.append(f'{key}: {{ {self.dict_to_custom_input(value)} }}')
                         case list():
                             for item in any_object:
-                                pairs.append(self.dict_to_custom_string(item))
+                                pairs.append(self.dict_to_custom_input(item))
                         case _:
                             pairs.append(f'{key}: "{value}"')
         return ', '.join(pairs)
