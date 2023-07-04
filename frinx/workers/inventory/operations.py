@@ -22,12 +22,12 @@ class Inventory(ServiceWorkersImpl):
             inventory_url_base: str = INVENTORY_URL_BASE
 
         class WorkerOutput(TaskOutput):
-            data: DictAny
+            output: DictAny
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             response = execute_inventory_query(
                 query=worker_input.query,
                 variables=worker_input.variables,
                 inventory_url_base=worker_input.inventory_url_base
             )
-            return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
+            return TaskResult(status=TaskResultStatus.COMPLETED, output=self.WorkerOutput(output=response.json()))

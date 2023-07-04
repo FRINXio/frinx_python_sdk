@@ -28,11 +28,11 @@ class TestWorker(ServiceWorkersImpl):
         class WorkerOutput(TaskOutput):
             output: str
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             return TaskResult(
                 status=TaskResultStatus.COMPLETED,
                 logs=['Echo worker invoked successfully'],
-                output={'output': worker_input.input}
+                output=self.WorkerOutput(output=worker_input.input)
             )
 
     class Sleep(WorkerImpl):
@@ -52,7 +52,7 @@ class TestWorker(ServiceWorkersImpl):
         class WorkerOutput(TaskOutput):
             time: int
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             sleep = worker_input.time if worker_input.time else self.DEFAULT_SLEEP
             if sleep < 0 or sleep > self.MAX_SLEEP:
                 return TaskResult(
@@ -64,7 +64,7 @@ class TestWorker(ServiceWorkersImpl):
             return TaskResult(
                 status=TaskResultStatus.COMPLETED,
                 logs=['Sleep worker invoked. Sleeping'],
-                output={'time': sleep}
+                output=self.WorkerOutput(time=sleep)
             )
 
     class DynamicForkGenerator(WorkerImpl):
@@ -84,7 +84,7 @@ class TestWorker(ServiceWorkersImpl):
             dynamic_tasks_i: DictAny
             dynamic_tasks: ListAny
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             wf_count = worker_input.wf_count
             wf_name = worker_input.wf_name
             wf_inputs = worker_input.wf_inputs
@@ -105,10 +105,10 @@ class TestWorker(ServiceWorkersImpl):
             return TaskResult(
                 status=TaskResultStatus.COMPLETED,
                 logs=['Dynamic fork generator worker invoked successfully'],
-                output={
-                    'dynamic_tasks_i': dynamic_tasks_i,
-                    'dynamic_tasks': dynamic_tasks
-                }
+                output=self.WorkerOutput(
+                    dynamic_tasks_i=dynamic_tasks_i,
+                    dynamic_tasks=dynamic_tasks
+                )
             )
 
     class LoremIpsum(WorkerImpl):
@@ -128,7 +128,7 @@ class TestWorker(ServiceWorkersImpl):
             text: str
             bytes: int
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             text = generate_text(
                 num_paragraphs=worker_input.num_paragraphs,
                 num_sentences=worker_input.num_sentences,
@@ -138,10 +138,10 @@ class TestWorker(ServiceWorkersImpl):
             return TaskResult(
                 status=TaskResultStatus.COMPLETED,
                 logs=['Lorem ipsum worker invoked successfully'],
-                output={
-                    'text': text,
-                    'bytes': len(text.encode('utf-8'))
-                }
+                output=self.WorkerOutput(
+                    text=text,
+                    bytes=len(text.encode('utf-8'))
+                )
             )
 
 

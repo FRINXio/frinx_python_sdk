@@ -28,14 +28,14 @@ class ConnectionManager(ServiceWorkersImpl):
         class WorkerOutput(TaskOutput):
             output: DictAny
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             response = install_node(
                 node_id=worker_input.node_id,
                 connection_type=worker_input.connection_type,
                 install_params=worker_input.install_params,
                 uniconfig_url_base=worker_input.uniconfig_url_base
             )
-            return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
+            return TaskResult(status=TaskResultStatus.COMPLETED, output=self.WorkerOutput(output=response.json()))
 
     class UninstallNode(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
@@ -50,10 +50,10 @@ class ConnectionManager(ServiceWorkersImpl):
         class WorkerOutput(TaskOutput):
             output: DictAny
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             response = uninstall_node(
                 node_id=worker_input.node_id,
                 connection_type=worker_input.connection_type,
                 uniconfig_url_base=worker_input.uniconfig_url_base
             )
-            return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
+            return TaskResult(status=TaskResultStatus.COMPLETED, output=self.WorkerOutput(output=response.json()))
