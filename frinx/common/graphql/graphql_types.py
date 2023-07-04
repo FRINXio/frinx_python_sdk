@@ -207,7 +207,9 @@ class Input(BaseModel):
                     match value:
                         case Enum():
                             pairs.append(f'{key}: {value.name}')
-                        case bool() | int() | float():
+                        case bool():
+                            pairs.append(f'{key}: {str(value).lower()}')
+                        case int() | float():
                             pairs.append(f'{key}: {value}')
                         case dict():
                             pairs.append(f'{key}: {self.dict_to_custom_string(value)}')
@@ -227,7 +229,7 @@ class Input(BaseModel):
 
 
 class Mutation(BaseModel):
-    payload: Payload
+    payload: Payload | bool
     _name: str
 
     class Config:
@@ -276,7 +278,9 @@ class Query(BaseModel):
                     match value:
                         case Enum():
                             pairs.append(f'{key}: {value.name}')
-                        case bool() | int() | float():
+                        case bool():
+                            pairs.append(f'{key}: {str(value).lower()}')
+                        case int() | float():
                             pairs.append(f'{key}: {value}')
                         case dict():
                             pairs.append(f'{key}: {{ {self.dict_to_custom_input(value)} }}')

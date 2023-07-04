@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class ServiceWorkflowsImpl:
     service_workflows: list[type[WorkflowImpl]] = []
 
-    def __init__(self, workflows: list[type[WorkflowImpl]] | None, exclude: bool = False) -> None:
+    def __init__(self, workflows: list[type[WorkflowImpl]] | None = None, exclude: bool = False) -> None:
         """
 
         Args:
