@@ -193,7 +193,6 @@ class GraphqlJsonParser:
         self.__create_refs()
 
     def __import_classes(self, items: dict[str, Any], worker_list: list[Optional[str]]) -> None:
-
         kv_template = Template('from frinx.common.graphql.graphql_types import $type\n')
 
         imports = [

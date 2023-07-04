@@ -1,5 +1,13 @@
 import json
 
+from model import AddBlueprintInput
+from model import AddBlueprintMutation
+from model import AddBlueprintPayload
+from model import Blueprint
+from model import BlueprintConnection
+from model import BlueprintEdge
+from model import BlueprintsQuery
+
 from frinx.common.graphql.schema_converter import GraphqlJsonParser
 
 
@@ -13,11 +21,6 @@ class TestTaskGenerator:
         assert reference == converted
 
     def test_render_query(self) -> None:
-        from model import Blueprint
-        from model import BlueprintConnection
-        from model import BlueprintEdge
-        from model import BlueprintsQuery
-
         reference = '{ blueprints { edges { cursor node { createdAt name template updatedAt } } totalCount } }'
         query = BlueprintsQuery(
             payload=BlueprintConnection(
@@ -32,11 +35,6 @@ class TestTaskGenerator:
         assert reference == query
 
     def test_render_mutation(self) -> None:
-        from model import AddBlueprintInput
-        from model import AddBlueprintMutation
-        from model import AddBlueprintPayload
-        from model import Blueprint
-
         bp_inputs = 'name: "IOS", template: "{ "cli": { "cli-topology:host": "sample-topology" } }"'
         bp_payload = 'blueprint { createdAt name template updatedAt }'
         reference = f'mutation {{ addBlueprint ( input: {{ {bp_inputs} }}) {{ { bp_payload } }} }}'

@@ -166,7 +166,6 @@ class Interface(BaseModel):
 
 
 class Payload(BaseModel):
-
     def dict_to_custom_string(self, any_object: Any) -> str:
         pairs = []
         match any_object:
@@ -197,7 +196,6 @@ class Payload(BaseModel):
 
 
 class Input(BaseModel):
-
     def dict_to_custom_string(self, any_object: Any) -> str:
         pairs = []
         match any_object:
@@ -236,7 +234,6 @@ class Mutation(BaseModel):
         extra = Extra.forbid
 
     def dict_to_custom_string(self, value: dict[str, Any]) -> str:
-
         if isinstance(value, Input):
             return f'{{ {value.render()} }}'
         elif isinstance(value, list):
@@ -284,10 +281,16 @@ class Query(BaseModel):
                         case dict():
                             pairs.append(f'{key}: {{ {self.dict_to_custom_input(value)} }}')
                         case list():
-                            for item in any_object:
-                                pairs.append(self.dict_to_custom_input(item))
+                            for item in value:
+                                pairs.append(f'{key}: [ {self.dict_to_custom_input(item)} ]')
                         case _:
                             pairs.append(f'{key}: "{value}"')
+            case str():
+                pairs.append(f'"{any_object}"')
+            case bool() | int() | float():
+                pairs.append(f' {any_object}')
+            case Enum():
+                pairs.append(f'{any_object.name}')
         return ', '.join(pairs)
 
     def dict_to_custom_string(self, any_object: Any) -> str:
