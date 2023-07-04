@@ -30,7 +30,7 @@ class UniconfigManager(ServiceWorkersImpl):
             transaction_id: str
             uniconfig_server_id: str | None
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             response = create_transaction(
                 transaction_timeout=worker_input.transaction_timeout,
                 use_dedicated_session=worker_input.use_dedicated_session,
@@ -41,7 +41,7 @@ class UniconfigManager(ServiceWorkersImpl):
             uniconfig_server_id: str | None = cookies.get('uniconfig_server_id')
             return TaskResult(
                 status=TaskResultStatus.COMPLETED,
-                output={'transaction_id': transaction_id, 'uniconfig_server_id': uniconfig_server_id}
+                output=self.WorkerOutput(transaction_id=transaction_id, uniconfig_server_id=uniconfig_server_id)
             )
 
     class CloseTransaction(WorkerImpl):
@@ -53,7 +53,7 @@ class UniconfigManager(ServiceWorkersImpl):
             transaction_id: str
             uniconfig_url_base: str = UNICONFIG_URL_BASE
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[None]:
             close_transaction(transaction_id=worker_input.transaction_id)
             return TaskResult(status=TaskResultStatus.COMPLETED)
 
@@ -72,7 +72,7 @@ class UniconfigManager(ServiceWorkersImpl):
         class WorkerOutput(TaskOutput):
             output: DictAny
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             response = commit_transaction(
                 transaction_id=worker_input.transaction_id,
                 uniconfig_server_id=worker_input.uniconfig_server_id,
@@ -81,7 +81,7 @@ class UniconfigManager(ServiceWorkersImpl):
                 uniconfig_url_base=worker_input.uniconfig_url_base
             )
 
-            return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
+            return TaskResult(status=TaskResultStatus.COMPLETED, output=self.WorkerOutput(output=response.json()))
 
     class ReplaceConfigWithOperational(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
@@ -97,14 +97,14 @@ class UniconfigManager(ServiceWorkersImpl):
         class WorkerOutput(TaskOutput):
             output: DictAny
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             response = replace_config_with_operational(
                 node_ids=worker_input.node_ids,
                 transaction_id=worker_input.transaction_id,
                 uniconfig_server_id=worker_input.uniconfig_server_id,
                 uniconfig_url_base=worker_input.uniconfig_url_base
             )
-            return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
+            return TaskResult(status=TaskResultStatus.COMPLETED, output=self.WorkerOutput(output=response.json()))
 
     class SyncFromNetwork(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
@@ -120,11 +120,11 @@ class UniconfigManager(ServiceWorkersImpl):
         class WorkerOutput(TaskOutput):
             output: DictAny
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             response = sync_from_network(
                 node_ids=worker_input.node_ids,
                 transaction_id=worker_input.transaction_id,
                 uniconfig_server_id=worker_input.uniconfig_server_id,
                 uniconfig_url_base=worker_input.uniconfig_url_base
             )
-            return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
+            return TaskResult(status=TaskResultStatus.COMPLETED, output=self.WorkerOutput(output=response.json()))

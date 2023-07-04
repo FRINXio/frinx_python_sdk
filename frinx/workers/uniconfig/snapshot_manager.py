@@ -29,7 +29,7 @@ class SnapshotManager(ServiceWorkersImpl):
         class WorkerOutput(TaskOutput):
             output: DictAny
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             response = create_snapshot(
                 node_ids=worker_input.node_ids,
                 snapshot_name=worker_input.snapshot_name,
@@ -37,7 +37,7 @@ class SnapshotManager(ServiceWorkersImpl):
                 uniconfig_server_id=worker_input.uniconfig_server_id,
                 uniconfig_url_base=worker_input.uniconfig_url_base
             )
-            return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
+            return TaskResult(status=TaskResultStatus.COMPLETED, output=self.WorkerOutput(output=response.json()))
 
     class DeleteSnapshot(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
@@ -53,14 +53,14 @@ class SnapshotManager(ServiceWorkersImpl):
         class WorkerOutput(TaskOutput):
             output: DictAny
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             response = delete_snapshot(
                 snapshot_name=worker_input.snapshot_name,
                 transaction_id=worker_input.transaction_id,
                 uniconfig_server_id=worker_input.uniconfig_server_id,
                 uniconfig_url_base=worker_input.uniconfig_url_base
             )
-            return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
+            return TaskResult(status=TaskResultStatus.COMPLETED, output=self.WorkerOutput(output=response.json()))
 
     class ReplaceConfigWithSnapshot(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
@@ -77,7 +77,7 @@ class SnapshotManager(ServiceWorkersImpl):
         class WorkerOutput(TaskOutput):
             output: DictAny
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             response = replace_config_with_snapshot(
                 snapshot_name=worker_input.snapshot_name,
                 node_ids=worker_input.node_ids,
@@ -85,4 +85,4 @@ class SnapshotManager(ServiceWorkersImpl):
                 uniconfig_server_id=worker_input.uniconfig_server_id,
                 uniconfig_url_base=worker_input.uniconfig_url_base
             )
-            return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
+            return TaskResult(status=TaskResultStatus.COMPLETED, output=self.WorkerOutput(output=response.json()))

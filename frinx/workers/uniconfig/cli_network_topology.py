@@ -30,7 +30,7 @@ class CliNetworkTopology(ServiceWorkersImpl):
         class WorkerOutput(TaskOutput):
             output: dict[str, Any]
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             response = execute_and_read(
                 node_id=worker_input.node_id,
                 command=worker_input.command,
@@ -39,7 +39,7 @@ class CliNetworkTopology(ServiceWorkersImpl):
                 wait_for_output=worker_input.wait_for_output,
                 uniconfig_url_base=worker_input.uniconfig_url_base
             )
-            return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
+            return TaskResult(status=TaskResultStatus.COMPLETED, output=self.WorkerOutput(output=response.json()))
 
     class Execute(WorkerImpl):
         class WorkerDefinition(TaskDefinition):
@@ -57,7 +57,7 @@ class CliNetworkTopology(ServiceWorkersImpl):
         class WorkerOutput(TaskOutput):
             output: dict[str, Any]
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             response = execute(
                 node_id=worker_input.node_id,
                 command=worker_input.command,
@@ -65,4 +65,4 @@ class CliNetworkTopology(ServiceWorkersImpl):
                 uniconfig_server_id=worker_input.uniconfig_server_id,
                 uniconfig_url_base=worker_input.uniconfig_url_base
             )
-            return TaskResult(status=TaskResultStatus.COMPLETED, output=response.json())
+            return TaskResult(status=TaskResultStatus.COMPLETED, output=self.WorkerOutput(output=response.json()))

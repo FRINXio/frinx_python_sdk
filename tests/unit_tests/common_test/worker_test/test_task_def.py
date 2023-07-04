@@ -35,7 +35,7 @@ class TestTaskGenerator:
                 status_code: int = Field(..., alias='statusCode')
                 cookies: dict[str, Any]
 
-            def execute(self, worker_input: WorkerInput) -> TaskResult:
+            def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
                 return TaskResult(status=TaskResultStatus.COMPLETED)
 
         test_task = HttpTask(task_def_template=DefaultTaskDefinition).task_def.dict(
@@ -79,7 +79,7 @@ class TestTaskGenerator:
                 status_code: int = Field(..., alias='statusCode')
                 cookies: dict[str, Any]
 
-            def execute(self, worker_input: WorkerInput) -> TaskResult:
+            def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
                 return TaskResult(status=TaskResultStatus.COMPLETED)
 
         class DefaultCustomTaskDefinition(DefaultTaskDefinition):

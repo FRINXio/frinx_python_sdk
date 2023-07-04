@@ -13,11 +13,13 @@ class MockWorker(WorkerImpl):
         name: str = 'MockWorker'
         description: str = 'Helper class used in tests.'
 
-    class WorkerInput(TaskInput): ...
+    class WorkerInput(TaskInput):
+        ...
 
-    class WorkerOutput(TaskOutput): ...
+    class WorkerOutput(TaskOutput):
+        ...
 
-    def execute(self, worker_input: WorkerInput) -> TaskResult:
+    def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
         return TaskResult(status=TaskResultStatus.COMPLETED)
 
 
@@ -25,7 +27,7 @@ class MockWorkflow(WorkflowImpl):
     name: str = 'MockWorkflow'
     version: int = 1
     description: str = 'Helper class used in tests.'
-    
+
     class WorkflowInput(WorkflowImpl.WorkflowInput):
         device_name: WorkflowInputField = WorkflowInputField(name='device_name')
         zone: WorkflowInputField = WorkflowInputField(name='zone')
