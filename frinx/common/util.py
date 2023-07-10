@@ -1,6 +1,8 @@
 import json
 from typing import Any
 
+from frinx.common.type_aliases import DictAny
+
 
 def jsonify_description(
     description: str, labels: list[str] | None = None, rbac: list[str] | None = None
@@ -34,3 +36,7 @@ def snake_to_camel_case(string: str) -> str:
 
 def normalize_base_url(url: str) -> str:
     return url.removesuffix('/')
+
+
+def remove_empty_elements_from_dict(any_dict: DictAny) -> DictAny:
+    return dict((k, v) for k, v in any_dict.items() if v)

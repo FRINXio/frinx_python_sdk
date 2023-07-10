@@ -102,3 +102,15 @@ class FailedTaskError(ConductorWorkerError):
 
     def __init__(self, error_msg: str) -> None:
         self.error_msg = error_msg
+
+
+class TaskExecutionProperties(BaseModel):
+    exclude_empty_inputs: bool = False
+    transform_string_to_json_valid: bool = False
+
+    class Config:
+        allow_mutation = False
+        extra = Extra.forbid
+        validate_all = True
+        arbitrary_types_allowed = False
+        allow_population_by_field_name = False

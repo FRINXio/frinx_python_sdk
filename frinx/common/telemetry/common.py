@@ -26,11 +26,11 @@ def increment_task_execution_queue_full(metrics: Metrics, task_type: str) -> Non
     )
 
 
-def increment_uncaught_exception(metrics: Metrics) -> None:
+def increment_uncaught_exception(metrics: Metrics, task_type: str) -> None:
     metrics.increment_counter(
         name=MetricName.THREAD_UNCAUGHT_EXCEPTION,
         documentation=MetricDocumentation.THREAD_UNCAUGHT_EXCEPTION,
-        labels={},
+        labels={MetricLabel.TASK_TYPE: task_type},
     )
 
 

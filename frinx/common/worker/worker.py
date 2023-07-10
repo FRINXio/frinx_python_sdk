@@ -1,7 +1,10 @@
 import logging
 import time
+import types
 from abc import ABC
 from abc import abstractmethod
+from json import JSONDecodeError
+from json import loads as json_loads
 from typing import Any
 from typing import TypeAlias
 
@@ -15,11 +18,14 @@ from frinx.common.telemetry.common import increment_task_poll
 from frinx.common.telemetry.common import increment_uncaught_exception
 from frinx.common.telemetry.common import record_task_execute_time
 from frinx.common.telemetry.metrics import Metrics
+from frinx.common.type_aliases import DictAny
 from frinx.common.util import jsonify_description
+from frinx.common.util import remove_empty_elements_from_dict
 from frinx.common.util import snake_to_camel_case
 from frinx.common.worker.task_def import BaseTaskdef
 from frinx.common.worker.task_def import DefaultTaskDefinition
 from frinx.common.worker.task_def import TaskDefinition
+from frinx.common.worker.task_def import TaskExecutionProperties
 from frinx.common.worker.task_def import TaskInput
 from frinx.common.worker.task_def import TaskOutput
 from frinx.common.worker.task_result import TaskResult
@@ -41,6 +47,9 @@ class Config:
 class WorkerImpl(ABC):
     task_def: TaskDefinition
     task_def_template: type[BaseTaskdef] | type[DefaultTaskDefinition] | None
+
+    class ExecutionProperties(TaskExecutionProperties):
+        ...
 
     class WorkerDefinition(TaskDefinition):
         ...
@@ -89,7 +98,7 @@ class WorkerImpl(ABC):
         # Transform dict to TaskDefinition object use default values in necessary
         task_def = TaskDefinition(**params)
 
-        for key, value in task_def_template: # type: ignore
+        for key, value in task_def_template:  # type: ignore
             if value.default is not None and task_def.__getattribute__(key) is None:
                 task_def.__setattr__(key, value.default)
 
@@ -111,7 +120,6 @@ class WorkerImpl(ABC):
 
     @classmethod
     def _execute_wrapper(cls, task: RawTaskIO) -> Any:
-
         task_type = str(task.get('taskType'))
         increment_task_poll(metrics, task_type)
         try:
@@ -121,19 +129,32 @@ class WorkerImpl(ABC):
             return task_result
         except Exception as error:
             increment_task_execution_error(metrics, task_type, error)
-            increment_uncaught_exception(metrics)
+            increment_uncaught_exception(metrics, task_type)
             logger.error('Validation error occurred: %s', error)
             return TaskResult(status=TaskResultStatus.FAILED, logs=[TaskExecLog(str(error))]).dict()
 
     @classmethod
     def _execute_func(cls, task: RawTaskIO) -> RawTaskIO:
+
+        input_data: DictAny = task['inputData']
+        execution_properties = cls.ExecutionProperties()
+
+        if execution_properties.exclude_empty_inputs:
+            logger.debug('Worker input data before removing empty elements: %s:', input_data)
+            input_data = remove_empty_elements_from_dict(task['inputData'])
+            logger.debug('Worker input data after removing empty elements: %s:', input_data)
+
+        if execution_properties.transform_string_to_json_valid:
+            logger.debug('Worker input data before json serialization: %s:', input_data)
+            input_data = cls._transform_input_data_to_json(input_data)
+            logger.debug('Worker input data after json serialization: %s:', input_data)
+
         try:
-            cls.WorkerInput.parse_obj(task['inputData'])
+            worker_input = cls.WorkerInput.parse_obj(input_data)
         except ValidationError as error:
             logger.error('Validation error occurred: %s', error)
             raise error
 
-        worker_input = cls.WorkerInput.parse_obj(task['inputData'])
         if not metrics.settings.metrics_enabled:
             return cls.execute(cls, worker_input).dict()  # type: ignore[arg-type]
 
@@ -142,6 +163,18 @@ class WorkerImpl(ABC):
         finish_time = time.time()
         record_task_execute_time(metrics, str(task.get('taskType')), finish_time - start_time)
         return task_result
+
+    @classmethod
+    def _transform_input_data_to_json(cls, input_data: DictAny) -> DictAny:
+        for k, v in cls.WorkerInput.__fields__.items():
+            if isinstance(v.outer_type_, types.GenericAlias):
+                if v.outer_type_ == list[str] or v.outer_type_ == DictAny:
+                    if type(input_data.get(k)) == str:
+                        try:
+                            input_data[k] = json_loads(str(input_data.get(k)))
+                        except JSONDecodeError as e:
+                            raise Exception(f'Worker input {k} is invalid JSON, {e}')
+        return input_data
 
     @classmethod
     def validate(cls) -> None:
