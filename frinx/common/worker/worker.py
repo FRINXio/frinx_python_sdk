@@ -1,6 +1,5 @@
 import logging
 import time
-import types
 from abc import ABC
 from abc import abstractmethod
 from json import JSONDecodeError
@@ -167,13 +166,12 @@ class WorkerImpl(ABC):
     @classmethod
     def _transform_input_data_to_json(cls, input_data: DictAny) -> DictAny:
         for k, v in cls.WorkerInput.__fields__.items():
-            if isinstance(v.outer_type_, types.GenericAlias):
-                if v.outer_type_ == list[str] or v.outer_type_ == DictAny:
-                    if type(input_data.get(k)) == str:
-                        try:
-                            input_data[k] = json_loads(str(input_data.get(k)))
-                        except JSONDecodeError as e:
-                            raise Exception(f'Worker input {k} is invalid JSON, {e}')
+            if v.outer_type_ == list[str] or v.outer_type_ == DictAny:
+                if type(input_data.get(k)) == str:
+                    try:
+                        input_data[k] = json_loads(str(input_data.get(k)))
+                    except JSONDecodeError as e:
+                        raise Exception(f'Worker input {k} is invalid JSON, {e}')
         return input_data
 
     @classmethod
