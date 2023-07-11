@@ -1,9 +1,13 @@
+import copy
 from typing import Any
 
 from pydantic import Field
+from pydantic import error_wrappers
+from pytest import raises
 
 from frinx.common.conductor_enums import TaskResultStatus
 from frinx.common.frinx_rest import X_FROM
+from frinx.common.type_aliases import DictAny
 from frinx.common.type_aliases import ListAny
 from frinx.common.worker.task_def import DefaultTaskDefinition
 from frinx.common.worker.task_def import TaskDefinition
@@ -11,6 +15,7 @@ from frinx.common.worker.task_def import TaskInput
 from frinx.common.worker.task_def import TaskOutput
 from frinx.common.worker.task_result import TaskResult
 from frinx.common.worker.worker import WorkerImpl
+from tests.unit_tests.conftest import MockExecuteProperties
 
 
 class TestTaskGenerator:
@@ -106,3 +111,66 @@ class TestTaskGenerator:
         }
 
         assert test_mock == test_task
+
+    def test_execute_properties_default(self) -> None:
+
+        task = MockExecuteProperties()
+        response: DictAny = DictAny({
+            'response': {
+                'string_list': ['a', 'b', 'c'],
+                'and_dict': {'a': 'a', 'b': {'c': 'c'}},
+                'required_string': 'a',
+                'optional_string': None
+            }
+        })
+
+        result = task.__class__._execute_func(task=copy.deepcopy(task.TEST_WORKER_INPUTS))
+        assert result.get('output') == response
+
+    def test_execute_properties_exclude_empty_strings_disabled(self) -> None:
+        task = MockExecuteProperties()
+        response: DictAny = DictAny({
+            'response': {
+                'string_list': ['a', 'b', 'c'],
+                'and_dict': {'a': 'a', 'b': {'c': 'c'}},
+                'required_string': 'a',
+                'optional_string': ''
+            }
+        })
+
+        task.ExecutionProperties.__fields__['exclude_empty_inputs'].default = False
+        result = task.__class__._execute_func(task=copy.deepcopy(task.TEST_WORKER_INPUTS))
+        assert result.get('output') == response
+
+    def test_execute_properties_transform_string_to_json_valid_disabled(self) -> None:
+        task = MockExecuteProperties()
+
+        test_worker_inputs: DictAny = DictAny({
+            'inputData': {
+                'string_list': ['a', 'b', 'c'],
+                'and_dict': {'a': 'a', 'b': {'c': 'c'}},
+                'required_string': 'a',
+                'optional_string': ''
+            }
+        })
+
+        response: DictAny = DictAny({
+            'response': {
+                'string_list': ['a', 'b', 'c'],
+                'and_dict': {'a': 'a', 'b': {'c': 'c'}},
+                'required_string': 'a',
+                'optional_string': None
+            }
+        })
+
+        task.ExecutionProperties.__fields__['exclude_empty_inputs'].default = True
+        task.ExecutionProperties.__fields__['transform_string_to_json_valid'].default = False
+        result = task.__class__._execute_func(task=copy.deepcopy(test_worker_inputs))
+        assert result.get('output') == response
+
+    def test_execute_properties_transform_string_to_json_valid_disabled_exception(self) -> None:
+
+        task = MockExecuteProperties()
+        task.ExecutionProperties.__fields__['transform_string_to_json_valid'].default = False
+        with raises(error_wrappers.ValidationError):
+            task.__class__._execute_func(task=copy.deepcopy(task.TEST_WORKER_INPUTS))
