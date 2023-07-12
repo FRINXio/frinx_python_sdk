@@ -70,7 +70,7 @@ class Schellar(ServiceWorkersImpl):
         )
 
         class ExecutionProperties(TaskExecutionProperties):
-            exclude_empty_inputs = True
+            exclude_empty_inputs: bool = True
 
         class WorkerDefinition(TaskDefinition):
             name: str = 'SCHELLAR_get_schedules'
@@ -91,20 +91,19 @@ class Schellar(ServiceWorkersImpl):
             query: str
             variables: Optional[DictAny]
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
 
             query = SchedulesQuery(
                 payload=self.SCHEDULES
             )
 
-            if worker_input.workflow_name or worker_input.workflow_version:
-                query_filter = SchedulesFilterInput(
+            if worker_input.workflow_name and worker_input.workflow_version:
+                query.filter = SchedulesFilterInput(
                     workflowName=worker_input.workflow_name,
                     workflowVersion=worker_input.workflow_version
                 )
-
-                if query_filter.dict(exclude_none=True):
-                    query.filter = query_filter
+            elif worker_input.workflow_name or worker_input.workflow_version:
+                raise Exception('Missing combination of inputs')
 
             match worker_input.type:
                 case PaginationCursorType.AFTER:
@@ -135,7 +134,7 @@ class Schellar(ServiceWorkersImpl):
         )
 
         class ExecutionProperties(TaskExecutionProperties):
-            exclude_empty_inputs = True
+            exclude_empty_inputs: bool = True
 
         class WorkerDefinition(TaskDefinition):
             name: str = 'SCHELLAR_get_schedule'
@@ -148,7 +147,7 @@ class Schellar(ServiceWorkersImpl):
             query: str
             variables: Optional[DictAny]
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
 
             query = ScheduleQuery(
                 payload=self.SCHEDULE,
@@ -168,7 +167,7 @@ class Schellar(ServiceWorkersImpl):
         )
 
         class ExecutionProperties(TaskExecutionProperties):
-            exclude_empty_inputs = True
+            exclude_empty_inputs: bool = True
 
         class WorkerDefinition(TaskDefinition):
             name: str = 'SCHELLAR_delete_schedule'
@@ -181,7 +180,7 @@ class Schellar(ServiceWorkersImpl):
             query: str
             variables: Optional[DictAny]
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
 
             mutation = DeleteScheduleMutation(
                 payload=True,
@@ -219,8 +218,8 @@ class Schellar(ServiceWorkersImpl):
         )
 
         class ExecutionProperties(TaskExecutionProperties):
-            exclude_empty_inputs = True
-            transform_string_to_json_valid = True
+            exclude_empty_inputs: bool = True
+            transform_string_to_json_valid: bool = True
 
         class WorkerDefinition(TaskDefinition):
             name: str = 'SCHELLAR_create_schedule'
@@ -245,7 +244,7 @@ class Schellar(ServiceWorkersImpl):
             query: str
             variables: Optional[DictAny]
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
 
             mutation = CreateScheduleMutation(
                 payload=self.SCHEDULE,
@@ -292,8 +291,8 @@ class Schellar(ServiceWorkersImpl):
         )
 
         class ExecutionProperties(TaskExecutionProperties):
-            exclude_empty_inputs = True
-            transform_string_to_json_valid = True
+            exclude_empty_inputs: bool = True
+            transform_string_to_json_valid: bool = True
 
         class WorkerDefinition(TaskDefinition):
             name: str = 'SCHELLAR_update_schedule'
@@ -318,7 +317,7 @@ class Schellar(ServiceWorkersImpl):
             query: str
             variables: Optional[DictAny]
 
-        def execute(self, worker_input: WorkerInput) -> TaskResult:
+        def execute(self, worker_input: WorkerInput) -> TaskResult[WorkerOutput]:
             mutation = UpdateScheduleMutation(
                 name=worker_input.name,
                 payload=self.SCHEDULE,

@@ -1,6 +1,7 @@
 import json
 import logging
 from collections.abc import Callable
+from types import MappingProxyType
 from typing import Any
 from typing import Optional
 
@@ -10,7 +11,7 @@ from websockets.legacy.client import connect as ws_connect
 
 
 class GraphqlClient:
-    def __init__(self, endpoint: str, headers: Optional[dict[str, str]] = None, **kwargs: Any):
+    def __init__(self, endpoint: str, headers: Optional[dict[str, str] | MappingProxyType] = None, **kwargs: Any):
         self.logger = logging.getLogger(__name__)
         self.endpoint = endpoint
         self.headers = headers if headers is not None else {}

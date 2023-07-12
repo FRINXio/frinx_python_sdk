@@ -17,63 +17,63 @@ class SchellarWorkflows(ServiceWorkflowsImpl):
         labels: list[str] = ['SCHELLAR']
 
         class WorkflowInput(WorkflowImpl.WorkflowInput):
-            name = WorkflowInputField(
+            name: WorkflowInputField = WorkflowInputField(
                 name='name',
                 frontend_default_value='',
                 description='Unique schedule name',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            workflow_name = WorkflowInputField(
+            workflow_name: WorkflowInputField = WorkflowInputField(
                 name='workflow_name',
                 frontend_default_value='',
                 description='Existing workflow name',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            workflow_version = WorkflowInputField(
+            workflow_version: WorkflowInputField = WorkflowInputField(
                 name='workflow_version',
                 frontend_default_value='1',
                 description='Existing workflow version',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            cron_string = WorkflowInputField(
+            cron_string: WorkflowInputField = WorkflowInputField(
                 name='cron_string',
                 frontend_default_value='* * * * *',
                 description='Cron Expression',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            enabled = WorkflowInputField(
+            enabled: WorkflowInputField = WorkflowInputField(
                 name='enabled',
                 frontend_default_value=True,
                 description='Enable workflow execution',
                 type=FrontendWFInputFieldType.TOGGLE,
             )
 
-            parallel_runs = WorkflowInputField(
+            parallel_runs: WorkflowInputField = WorkflowInputField(
                 name='parallel_runs',
                 frontend_default_value=False,
                 description='Enable parallel executions of scheduled workflow',
                 type=FrontendWFInputFieldType.TOGGLE,
             )
 
-            workflow_context = WorkflowInputField(
+            workflow_context: WorkflowInputField = WorkflowInputField(
                 name='workflow_context',
                 frontend_default_value='',
                 description='Workflow input parameters in json format',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            from_date = WorkflowInputField(
+            from_date: WorkflowInputField = WorkflowInputField(
                 name='from_date',
                 frontend_default_value='',
                 description='Example of format: 2023-05-17T10:15:00Z ',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            to_date = WorkflowInputField(
+            to_date: WorkflowInputField = WorkflowInputField(
                 name='to_date',
                 frontend_default_value='',
                 description='Example of format: 2023-05-17T10:15:00Z ',
@@ -122,63 +122,63 @@ class SchellarWorkflows(ServiceWorkflowsImpl):
         labels: list[str] = ['SCHELLAR']
 
         class WorkflowInput(WorkflowImpl.WorkflowInput):
-            name = WorkflowInputField(
+            name: WorkflowInputField = WorkflowInputField(
                 name='name',
                 frontend_default_value='',
                 description='Schedule name',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            workflow_name = WorkflowInputField(
+            workflow_name : WorkflowInputField = WorkflowInputField(
                 name='workflow_name',
                 frontend_default_value='',
                 description='Existing workflow name',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            workflow_version = WorkflowInputField(
+            workflow_version : WorkflowInputField = WorkflowInputField(
                 name='workflow_version',
                 frontend_default_value='1',
                 description='Existing workflow version',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            cron_string = WorkflowInputField(
+            cron_string : WorkflowInputField = WorkflowInputField(
                 name='cron_string',
                 frontend_default_value='* * * * *',
                 description='Cron Expression',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            enabled = WorkflowInputField(
+            enabled : WorkflowInputField = WorkflowInputField(
                 name='enabled',
                 frontend_default_value=None,
                 description='Enable workflow execution',
                 type=FrontendWFInputFieldType.TOGGLE,
             )
 
-            parallel_runs = WorkflowInputField(
+            parallel_runs : WorkflowInputField = WorkflowInputField(
                 name='parallel_runs',
                 frontend_default_value=None,
                 description='Enable parallel executions of scheduled workflow',
                 type=FrontendWFInputFieldType.TOGGLE,
             )
 
-            workflow_context = WorkflowInputField(
+            workflow_context : WorkflowInputField = WorkflowInputField(
                 name='workflow_context',
                 frontend_default_value='',
                 description='Workflow input parameters in json format',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            from_date = WorkflowInputField(
+            from_date : WorkflowInputField = WorkflowInputField(
                 name='from_date',
                 frontend_default_value='',
                 description='Example of format: 2023-05-17T10:15:00Z ',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            to_date = WorkflowInputField(
+            to_date : WorkflowInputField = WorkflowInputField(
                 name='to_date',
                 frontend_default_value='',
                 description='Example of format: 2023-05-17T10:15:00Z ',
@@ -228,7 +228,7 @@ class SchellarWorkflows(ServiceWorkflowsImpl):
         labels: list[str] = ['SCHELLAR']
 
         class WorkflowInput(WorkflowImpl.WorkflowInput):
-            name = WorkflowInputField(
+            name : WorkflowInputField = WorkflowInputField(
                 name='name',
                 frontend_default_value='',
                 description='Schedule name',
@@ -269,7 +269,7 @@ class SchellarWorkflows(ServiceWorkflowsImpl):
         labels: list[str] = ['SCHELLAR']
 
         class WorkflowInput(WorkflowImpl.WorkflowInput):
-            name = WorkflowInputField(
+            name : WorkflowInputField = WorkflowInputField(
                 name='name',
                 frontend_default_value='',
                 description='Schedule name',
@@ -310,35 +310,35 @@ class SchellarWorkflows(ServiceWorkflowsImpl):
         labels: list[str] = ['SCHELLAR']
 
         class WorkflowInput(WorkflowImpl.WorkflowInput):
-            workflow_name = WorkflowInputField(
+            workflow_name : WorkflowInputField = WorkflowInputField(
                 name='workflow_name',
                 frontend_default_value='',
                 description='Existing workflow name',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            workflow_version = WorkflowInputField(
+            workflow_version : WorkflowInputField = WorkflowInputField(
                 name='workflow_version',
                 frontend_default_value='',
                 description='Existing workflow version',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            cursor = WorkflowInputField(
+            cursor : WorkflowInputField = WorkflowInputField(
                 name='cursor',
                 frontend_default_value='',
                 description='Pagination cursor',
                 type=FrontendWFInputFieldType.STRING,
             )
 
-            size = WorkflowInputField(
+            size : WorkflowInputField = WorkflowInputField(
                 name='size',
                 frontend_default_value=10,
                 description='Pagination size',
                 type=FrontendWFInputFieldType.INT,
             )
 
-            type = WorkflowInputField(
+            type : WorkflowInputField = WorkflowInputField(
                 name='type',
                 frontend_default_value=PaginationCursorType.NONE,
                 description='Pagination type',
