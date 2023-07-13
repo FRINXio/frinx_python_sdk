@@ -12,6 +12,7 @@ CONDUCTOR_URL_BASE = os.getenv('CONDUCTOR_URL_BASE', 'http://workflow-proxy:8088
 INVENTORY_URL_BASE = os.getenv('INVENTORY_URL_BASE', 'http://inventory:8000/graphql')
 INFLUXDB_URL_BASE = os.getenv('INFLUXDB_URL_BASE', 'http://influxdb:8086')
 RESOURCE_MANAGER_URL_BASE = os.getenv('RESOURCE_MANAGER_URL_BASE', 'http://resource-manager:8884/query')
+SCHELLAR_URL_BASE = os.getenv('SCHELLAR_URL_BASE', 'http://schellar:3000/query')
 
 # URL HEADERS
 UNICONFIG_HEADERS = MappingProxyType({'Content-Type': 'application/json'})
@@ -35,6 +36,11 @@ INVENTORY_HEADERS = MappingProxyType(
         'x-tenant-id': X_TENANT_ID,
     }
 )
+
+SCHELLAR_HEADERS = MappingProxyType({
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+})
 
 ADDITIONAL_UNICONFIG_REQUEST_PARAMS = MappingProxyType(
     {

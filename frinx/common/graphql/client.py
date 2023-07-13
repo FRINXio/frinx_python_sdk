@@ -1,6 +1,7 @@
 import json
 import logging
 from collections.abc import Callable
+from types import MappingProxyType
 from typing import Any
 from typing import Optional
 
@@ -8,21 +9,25 @@ import aiohttp
 import requests
 from websockets.legacy.client import connect as ws_connect
 
+from frinx.common.type_aliases import DictAny
+from frinx.common.type_aliases import DictStr
+
+logger = logging.getLogger(__name__)
+
 
 class GraphqlClient:
-    def __init__(self, endpoint: str, headers: Optional[dict[str, str]] = None, **kwargs: Any):
-        self.logger = logging.getLogger(__name__)
-        self.endpoint = endpoint
-        self.headers = headers if headers is not None else {}
-        self.options = kwargs
+    def __init__(self, endpoint: str, headers: Optional[MappingProxyType[str, str] | DictStr] = None, **kwargs: Any):
+        self.endpoint: str = endpoint
+        self.headers: DictStr = dict(headers) if headers is not None else {}
+        self.options: Any = kwargs
 
     @staticmethod
     def __request_body(
         query: str,
-        variables: Optional[dict[str, Any]] = None,
+        variables: Optional[DictAny] = None,
         operation_name: Optional[str] = None
-    ) -> dict[str, Any]:
-        payload: dict[str, Any] = {'query': query}
+    ) -> DictAny:
+        payload: DictAny = {'query': query}
         if variables:
             payload['variables'] = variables
         if operation_name:
@@ -33,9 +38,9 @@ class GraphqlClient:
     def execute(
         self,
         query: str,
-        variables: Optional[dict[str, Any]] = None,
+        variables: Optional[DictAny] = None,
         operation_name: Optional[str] = None,
-        headers: Optional[dict[str, str]] = None,
+        headers: Optional[DictStr] = None,
         **kwargs: Any
     ) -> Any:
         headers = headers if headers is not None else {}
@@ -58,9 +63,9 @@ class GraphqlClient:
     async def execute_async(
         self,
         query: str,
-        variables: Optional[dict[str, Any]] = None,
+        variables: Optional[DictAny] = None,
         operation_name: Optional[str] = None,
-        headers: Optional[dict[str, str]] = None
+        headers: Optional[DictStr] = None
     ) -> Any:
         headers = headers if headers is not None else {}
         request_body = self.__request_body(
@@ -78,11 +83,11 @@ class GraphqlClient:
     async def subscribe(
         self,
         query: str,
-        handle: Callable[[dict[str, Any]], None],
-        variables: Optional[dict[str, Any]] = None,
+        handle: Callable[[DictAny], None],
+        variables: Optional[DictAny] = None,
         operation_name: Optional[str] = None,
-        headers: Optional[dict[str, str]] = None,
-        init_payload: Optional[dict[str, Any]] = None
+        headers: Optional[DictStr] = None,
+        init_payload: Optional[DictAny] = None
     ) -> None:
         headers = headers if headers is not None else {}
         init_payload = init_payload if init_payload is not None else {}
@@ -107,8 +112,8 @@ class GraphqlClient:
             async for response_message in websocket:
                 response_body = json.loads(response_message)
                 if response_body['type'] == 'connection_ack':
-                    self.logger.info('the server accepted the connection')
+                    logger.info('the server accepted the connection')
                 elif response_body['type'] == 'ka':
-                    self.logger.info('the server sent a keep alive message')
+                    logger.info('the server sent a keep alive message')
                 else:
                     handle(response_body['payload'])
